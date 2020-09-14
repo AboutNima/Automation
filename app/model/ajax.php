@@ -17,7 +17,7 @@ switch($urlPath[1])
 									{
 										case 'add':
 											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['ID']))
+											if(isset($_POST['data']))
 											{
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
@@ -227,6 +227,123 @@ switch($urlPath[1])
 														'err'=>-2,
 														'data'=>null
 													]));
+												}
+											}
+											break;
+									}
+									break;
+								case 'equipments':
+									switch($urlPath[5])
+									{
+										case 'add':
+											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])){
+												$data=$_POST['data'];
+												if(!isset($data['accessories'])) $data['accessories']=0;
+												$validation=new Validation($data,[
+													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
+													'brand'=>['length[برند,حداکثر,100]:max,100'],
+													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
+													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
+													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'count'=>['required[تعداد]','numeric[تعداد]'],
+													'status'=>'in[انتخاب,وضعیت]:0,1'
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$data['QRCode']=randomText(25);
+												$id=$db->insert('Eq',$data);
+												if((bool)$id){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'ابزار جدید با موفقیت ایجاد شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													if($db->getLastErrno()==1062){
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+															'err'=>0,
+															'data'=>null
+														]));
+													}else{
+
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+															'err'=>-2,
+															'data'=>null
+														]));
+													}
+												}
+											}
+										case 'getData':
+											if(isset($_POST['id']))
+											{
+												$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Eq',[
+													'type','size','company','propertyNumber','description','count'
+												]);
+											}
+											break;
+										case 'edit':
+											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
+													'brand'=>['length[برند,حداکثر,100]:max,100'],
+													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
+													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
+													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'count'=>['required[تعداد]','numeric[تعداد]'],
+													'status'=>'in[انتخاب,وضعیت]:0,1'
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$check=$db->where('id',$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID'])->
+												update('Eq',$data,1);
+												if($check)
+												{
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'تجهیزات با موفقیت ویرایش شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													if($db->getLastErrno()==1062)
+													{
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+															'err'=>0,
+															'data'=>null
+														]));
+													}else{
+
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+															'err'=>-2,
+															'data'=>null
+														]));
+													}
 												}
 											}
 											break;

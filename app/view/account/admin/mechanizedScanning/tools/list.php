@@ -53,7 +53,7 @@
                             <td>
 								<?php
 								if(empty($item->description)):
-                                ?>
+								?>
                                     <span class="label label-danger"> ثبت نشده </span>
 								<?php
 								else: echo $item->description; endif;

@@ -1,7 +1,7 @@
 <?php
-$data=$db->orderBy('id','DESC')->where('subId IS NULL')->
-objectBuilder()->get('MST',null,[
-	'id','QRCode','propertyNumber','description','type','size','company','count'
+$data=$db->orderBy('id','DESC')->
+objectBuilder()->get('Eq',null,[
+	'id','QRCode','name','brand','propertyNumber','accessories','count','status','description'
 ]);
 $script='/public/account/admin/mechanizedScanning/equipments/list';
 require_once 'app/controller/motherPage/header.php';

@@ -67,7 +67,8 @@
                                         <i class="fal fa-ellipsis-h"></i>
                                     </div>
                                     <div class="menu">
-                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
+                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/information"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
+                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه استفاده </span></a>
                                         <a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
                                     </div>
                                 </div>

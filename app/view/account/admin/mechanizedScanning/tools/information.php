@@ -3,7 +3,17 @@
         <div class="block">
             <div class="body">
                 <p class="fsize-15 fisb"> شماره اموال </p>
-                <p class="fsize-15 fism mt-0 text-success"><?php echo sprintf("%04d",$data->propertyNumber) ?></p>
+                <?php
+                if(!empty($data->propertyNumber)):
+                ?>
+                    <p class="fsize-15 fism mt-0 text-success"><?php echo sprintf("%04d",$data->propertyNumber) ?></p>
+                <?php
+                else:
+                ?>
+                    <p class="fsize-15 fism mt-0 text-danger"> ثبت نشده </p>
+                <?php
+                endif;
+                ?>
             </div>
         </div>
     </div>
@@ -48,84 +58,6 @@
 <div class="block">
     <div class="header">
         <div class="title">
-            <h6> تاریخچه ابزار <?php echo $data->type ?> </h6>
-            <p> در این قسمت میتوانید تاریخچه استفاده از ابزار <?php echo $data->type ?> را مشاهده کنید </p>
-        </div>
-        <div class="more float-left">
-            <div class="item">
-                <i class="fal fa-ellipsis-h"></i>
-            </div>
-            <div class="menu">
-                <a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت ابزار جدید </span></a>
-                <a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
-            </div>
-        </div>
-    </div>
-    <div class="body">
-        <div class="table-mask">
-            <table>
-                <thead>
-                <tr>
-                    <th> ردیف </th>
-                    <th> موجودی کل </th>
-                    <th> موجودی فعلی </th>
-                    <th> توضیحات </th>
-                    <th> اندازه </th>
-                    <th> شرکت سازنده </th>
-                    <th> گزینه ها </th>
-                </tr>
-                </thead>
-                <tbody>
-				<?php
-				if(!empty($sub)):
-					$num=1;
-					foreach($sub as $item):
-                    ?>
-                        <tr>
-                            <td><?php echo $num++ ?></td>
-                            <td><?php echo $item->count ?></td>
-                            <td>0</td>
-                            <td>
-								<?php
-								if(empty($item->description)):
-                                ?>
-                                    <span class="label label-danger"> ثبت نشده </span>
-								<?php
-								else: echo $item->description; endif;
-								?>
-                            </td>
-                            <td><?php echo $item->size ?></td>
-                            <td><?php echo $item->company ?></td>
-                            <td>
-                                <div class="more">
-                                    <div class="item">
-                                        <i class="fal fa-ellipsis-h"></i>
-                                    </div>
-                                    <div class="menu">
-                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
-                                        <a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-					<?php
-					endforeach;
-				else:
-					?>
-                    <tr>
-                        <td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
-                    </tr>
-				<?php
-				endif;
-				?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="block">
-    <div class="header">
-        <div class="title">
             <h6> مدیریت ابزار <?php echo $data->type ?> </h6>
             <p> در این قسمت میتوانید ابزار های زیر مجموعه را مدیریت کنید و یا ابزار زیر مجموعه جدید ایجاد کنید </p>
         </div>
@@ -158,7 +90,7 @@
 				if(!empty($sub)):
 					$num=1;
 					foreach($sub as $item):
-                    ?>
+						?>
                         <tr>
                             <td><?php echo $num++ ?></td>
                             <td><?php echo $item->count ?></td>
@@ -166,7 +98,7 @@
                             <td>
 								<?php
 								if(empty($item->description)):
-                                ?>
+									?>
                                     <span class="label label-danger"> ثبت نشده </span>
 								<?php
 								else: echo $item->description; endif;

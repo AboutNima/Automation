@@ -40,6 +40,7 @@ foreach($urlPath as $item)
 		case 'add': $urlCrt[]='افزودن';break;
 		case 'edit': $urlCrt[]='ویرایش';break;
 		case 'tools': $urlCrt[]='ابزار';break;
+		case 'history': $urlCrt[]='تاریخچه';break;
 		case 'mechanizedScanning': $urlCrt[]='سیستم اسکن مکانیزه (QRCode)';break;
 		default: $urlCrt[]=$item;break;
 	}
@@ -100,7 +101,21 @@ switch($urlPath[0])
 					switch($urlPath[2])
 					{
 						case 'tools':
-							if(!empty($id=(int)$urlPath[3])) require_once 'app/controller/account/admin/mechanizedScanning/tools/information.php';
+							if(!empty($id=(int)$urlPath[3]))
+							{
+								switch($urlPath[4])
+								{
+									case 'information':
+										require_once 'app/controller/account/admin/mechanizedScanning/tools/information.php';
+										break;
+									case 'history':
+										require_once 'app/controller/account/admin/mechanizedScanning/tools/history.php';
+										break;
+									default:
+										header('location:/404');
+										break;
+								}
+							}
 							else require_once 'app/controller/account/admin/mechanizedScanning/tools/list.php';
 							break;
 						case 'equipments':

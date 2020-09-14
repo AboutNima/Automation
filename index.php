@@ -40,6 +40,7 @@ foreach($urlPath as $item)
 		case 'add': $urlCrt[]='افزودن';break;
 		case 'edit': $urlCrt[]='ویرایش';break;
 		case 'tools': $urlCrt[]='ابزار';break;
+		case 'equipments': $urlCrt[]='تجهیزات و امکانات';break;
 		case 'history': $urlCrt[]='تاریخچه';break;
 		case 'information': $urlCrt[]='مشخصات ثبت شده';break;
 		case 'mechanizedScanning': $urlCrt[]='سیستم اسکن مکانیزه (QRCode)';break;

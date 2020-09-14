@@ -37,21 +37,45 @@
         margin-bottom: 75px;
         &.xs{
             width: .popupSize[xs];
+            @media(max-width: .popupSize[xs]){
+                top: 0 !important;
+                width: 100%;
+            }
         }
         &.sm{
             width: .popupSize[sm];
+            @media(max-width: .popupSize[sm]){
+                top: 0 !important;
+                width: calc(100% - 5px);
+            }
         }
         &.md{
             width: .popupSize[md];
+            @media(max-width: .popupSize[md]){
+                top: 0 !important;
+                width: 100%;
+            }
         }
         &.lmd{
             width: .popupSize[lmd];
+            @media(max-width: .popupSize[lmd]){
+                top: 0 !important;
+                width: 100%;
+            }
         }
         &.lg{
             width: .popupSize[lg];
+            @media(max-width: .popupSize[lg]){
+                top: 0 !important;
+                width: 100%;
+            }
         }
         &.xl{
             width: .popupSize[xl];
+            @media(max-width: .popupSize[xl]){
+                top: 0 !important;
+                width: 100%;
+            }
         }
 
         .popup-header{

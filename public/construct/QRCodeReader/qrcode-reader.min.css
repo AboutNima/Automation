@@ -1,0 +1,74 @@
+#qrr-overlay{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	top: 0;
+	left: 0;
+	z-index: 20000;
+	display: none;
+}
+#qrr-container{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	width: 450px;
+	height: 450px;
+	z-index: 20001;
+	border-radius: 10px;
+	display: none;
+}
+#qrr-container h1{
+	margin-top: 0;
+}
+#qrr-close{
+	position: absolute;
+	right: -45px;
+	top: 0;
+	cursor: pointer;
+	color: white;
+}
+#qrr-close i{
+	font-size: 35px;
+	vertical-align: top;
+	background: black;
+	border-radius: 50%;
+}
+#qrr-loading-message{
+	text-align: center;
+	padding: 15px;
+	background-color: #eee;
+	display: block;
+	border-radius: 5px;
+}
+#qrr-canvas{
+	display: block;
+	width: 100%;
+	height: 85%;
+	cursor: pointer;
+	border: 2px solid #4285f4;
+	border-radius: 5px;
+}
+#qrr-canvas.hidden{
+	display: none;
+}
+#qrr-output{
+	display: none;
+}
+#qrr-ok{
+	display: none;
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	padding: 10px 50px;
+	cursor: pointer;
+	font-weight: 700;
+	text-decoration: none;
+	background-color: green;
+	color: #fff;
+	border-radius: 10px;
+}
+#qrr-output-data{
+	display: none;
+}

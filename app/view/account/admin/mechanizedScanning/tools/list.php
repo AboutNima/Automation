@@ -9,7 +9,7 @@
                 <i class="fal fa-ellipsis-h"></i>
             </div>
             <div class="menu">
-                <a href="#add" class="popup-active" popup-target="#scan"><span><i class="fas fa-scanner"></i> اسکن ابزار </span></a>
+                <a href="#scan" class="popup-active" popup-target="#scan"><span><i class="fas fa-scanner"></i> اسکن ابزار </span></a>
                 <a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت ابزار جدید </span></a>
                 <a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
             </div>
@@ -196,6 +196,7 @@
 	</form>
 </div>
 <div class="popup" popup-size="md" popup-title="اسکن ابزار" id="scan">
+    <button class="btn btn-success" id="startScan"> اسکن با دوربین </button>
 	<div class="validation-message no-margin top"></div>
-    .Scan
+    <p></p>
 </div>

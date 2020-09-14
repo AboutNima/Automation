@@ -34,4 +34,10 @@ $(document).ready(function()
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })
+    $('#startScan').qrCodeReader({
+        callback: function(codes)
+        {
+            $('#scan p').html(codes)
+        }
+    })
 })

@@ -10,15 +10,11 @@
 	<?php
 	if(isset($link))
 	{
-		if(is_array($link))
-		{
-			foreach($link as $link)
-			{
-				echo "<link type='text/css' rel='stylesheet' href='{$link}.css'>";
-			}
-		}else{
-			echo "<link type='text/css' rel='stylesheet' href='{$link}.css'>";
-		}
+		if(!is_array($link)) $link=[$link];
+        foreach($link as $link)
+        {
+            echo "<link type='text/css' rel='stylesheet' href='{$link}.css'>";
+        }
 	}
 	?>
 

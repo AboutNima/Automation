@@ -9,6 +9,7 @@
                 <i class="fal fa-ellipsis-h"></i>
             </div>
             <div class="menu">
+                <a href="#add" class="popup-active" popup-target="#scan"><span><i class="fas fa-scanner"></i> اسکن ابزار </span></a>
                 <a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت ابزار جدید </span></a>
                 <a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
             </div>
@@ -67,7 +68,8 @@
                                         <i class="fal fa-ellipsis-h"></i>
                                     </div>
                                     <div class="menu">
-                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/information"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
+                                        <a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode; if(!empty($item->propertyNumber)) echo '.'.sprintf('%04d', $item->propertyNumber) ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
+                                        <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/information"><span><i class="far fa-file-alt"></i> دیگردیگر مشخصات </span></a>
                                         <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه استفاده </span></a>
                                         <a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
                                     </div>

@@ -1,0 +1,28 @@
+div[slick-dots]{
+    padding: 20px 0;
+    text-align: center;
+    ul.slick-dots{
+        li{
+            cursor: pointer;
+            display: inline-block;
+            padding: 2px;
+            margin: 0 2px;
+            button{
+                border: none;
+                font-size: 0;
+                width: 8px;
+                height: 8px;
+                background: #ececec;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all ease 0.2s;
+            }
+            &.slick-active{
+                button{
+                    width: 24px;
+                    background: linear-gradient(30deg, #902ba1, #5635cb);
+                }
+            }
+        }
+    }
+}

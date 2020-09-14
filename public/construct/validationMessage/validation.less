@@ -1,0 +1,83 @@
+.validation-message{
+    position: relative;
+    padding: 7px 24px;
+    margin-bottom: 1rem;
+    border-right: 4px solid transparent;
+    font-size: 12px;
+    margin: 20px 0;
+    display: none;
+    li{
+        margin: 6px 0;
+        position: relative;
+        margin-right: 15px;
+        display: block;
+        &:before{
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -15px;
+        }
+    }
+    &.no-margin{
+        &.top{
+            margin-top: 0;
+        }
+        &.bottom{
+            margin-bottom: 0;
+        }
+    }
+    &.danger{
+        border-color: lighten(.uiColors[danger],20%);
+        background: lighten(.uiColors[danger],35%);
+        color: darken(.uiColors[danger],15%);
+        li{
+            &:before{
+                background: darken(.uiColors[danger],15%);
+            }
+        }
+    }
+    &.warning{
+        border-color: lighten(.uiColors[warning],20%);
+        background: lighten(.uiColors[warning],35%);
+        color: darken(.uiColors[warning],15%);
+        li{
+            &:before{
+                background: darken(.uiColors[warning],15%);
+            }
+        }
+    }
+    &.success{
+        border-color: #6ad997;
+        background: lighten(.uiColors[success],45%);
+        color: darken(.uiColors[success],15%);
+        li{
+            &:before{
+                background: darken(.uiColors[success],15%);
+            }
+        }
+    }
+    &.primary{
+        border-color: lighten(.uiColors[primary],24%);
+        background: lighten(.uiColors[primary],35%);
+        color: darken(.uiColors[primary],15%);
+        li{
+            &:before{
+                background: darken(.uiColors[primary],15%);
+            }
+        }
+    }
+    &.purple{
+        border-color: lighten(.uiColors[purple],25%);
+        background: lighten(.uiColors[purple],35%);
+        color: darken(.uiColors[purple],15%);
+        li{
+            &:before{
+                background: darken(.uiColors[purple],15%);
+            }
+        }
+    }
+}

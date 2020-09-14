@@ -1,0 +1,98 @@
+// Start body
+body{
+    background: #fff;
+}
+
+// Start side
+.side-left,.side-right{
+    position: absolute;
+    height: calc(100% - 150px);
+    padding: 75px;
+}
+.side-right{
+    width: 455px;
+    background: url("media/back.jpg");
+    background-size: cover;
+    .body{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: calc(100% - 150px);
+        padding: 75px;
+        text-align: right;
+        h2{
+            font-size: 2rem;
+            font-weight: 300 !important;
+            color: #fff;
+        }
+        p{
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 100;
+        }
+    }
+    .footer{
+        position: absolute;
+        bottom: 75px;
+        p{
+            color: #fff;
+            font-weight: 100;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            i{
+                vertical-align: middle;
+                font-size: 13px;
+                margin-left: 10px;
+            }
+        }
+    }
+}
+.side-left{
+    width: calc(100% - 755px);
+    left: 0;
+    top: 0;
+    .body{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        h3{
+            color: #353535;
+            font-weight: 500 !important;
+            text-align: center;
+        }
+        form{
+            width: 400px;
+            input[type=text],input[type=password]{
+                padding: 15px 20px;
+                font-size: 16px;
+                background: #f7f7f9;
+                border-color: transparent;
+            }
+            .input-checkbox{
+                span{
+                    background: #efeff1;
+                }
+                &.active{
+                    span{
+                        background: .uiColors[purple];
+                    }
+                }
+            }
+            a{
+                background: #f7f7f9;
+                display: inline-block;
+                font-size: 12px;
+                padding: 14px 20px;
+                border-radius: 2px;
+                color: #353535;
+                transition: all ease 0.2s;
+                &:active,&:hover{
+                    background: #f1f1f3;
+                }
+            }
+        }
+    }
+}

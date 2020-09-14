@@ -1,0 +1,113 @@
+﻿/**
+*
+*	Name:			IRANYekan Font
+*	Version:			3.0
+*	Author:			Moslem Ebrahimi (moslemebrahimi.com)
+*	Created on:		Dec 20, 2018
+*	Updated on:		Dec 20, 2018
+*	Website:			http://fontiran.com
+*	Copyright:		Commercial/Proprietary Software
+--------------------------------------------------------------------------------------
+فونت ایران یکان یک نرم افزار مالکیتی محسوب می شود. جهت آگاهی از قوانین استفاده از این فونت ها لطفا به وب سایت (فونت ایران دات کام) مراجعه نمایید
+--------------------------------------------------------------------------------------
+IRANYekan fonts are considered a proprietary software. To gain information about the laws regarding the use of these fonts, please visit www.fontiran.com 
+--------------------------------------------------------------------------------------
+This set of fonts are used in this project under the license: (.....)
+--------------------------------------------------------------------------------------
+*	
+**/
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: 100;
+	src: url('eot/IRANSansWeb(FaNum)_UltraLight.eot');
+	src: url('eot/IRANSansWeb(FaNum)_UltraLight.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('woff/IRANSansWeb(FaNum)_UltraLight.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('ttf/IRANSansWeb(FaNum)_UltraLight.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: 300;
+	src: url('eot/IRANSansWeb(FaNum)_Light.eot');
+	src: url('eot/IRANSansWeb(FaNum)_Light.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('woff/IRANSansWeb(FaNum)_Light.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('ttf/IRANSansWeb(FaNum)_Light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: normal;
+	src: url('eot/IRANSansWeb(FaNum).eot');
+	src: url('eot/IRANSansWeb(FaNum).eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('woff/IRANSansWeb(FaNum).woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('ttf/IRANSansWeb(FaNum).ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: 500;
+	src: url('eot/IRANSansWeb(FaNum)_Medium.eot');
+	src: url('eot/IRANSansWeb(FaNum)_Medium.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('woff/IRANSansWeb(FaNum)_Medium.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('ttf/IRANSansWeb(FaNum)_Medium.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: bold;
+	src: url('eot/IRANSansWeb(FaNum)_Bold.eot');
+	src: url('eot/IRANSansWeb(FaNum)_Bold.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+	url('woff/IRANSansWeb(FaNum)_Bold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+	url('ttf/IRANSansWeb(FaNum)_Bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'irSans';
+	font-style: normal;
+	font-weight: 800;
+	src: url('eot/IRANSansWeb(FaNum)_Black.eot');
+	src: url('eot/IRANSansWeb(FaNum)_Black.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('woff/IRANSansWeb(FaNum)_Black.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('ttf/IRANSansWeb(FaNum)_Black.ttf') format('truetype');
+}
+
+
+body{
+	font-family: 'irSans' !important;
+	font-weight: normal !important;
+}
+
+.fisel{font-family:'irSans'!important;font-weight:100!important}.fisl{font-family:'irSans'!important;font-weight:300!important}.fisr{font-family:'irSans'!important;font-weight:normal!important}.fism{font-family:'irSans'!important;font-weight:500!important}.fisb{font-family:'irSans'!important;font-weight:bold!important}.fisbl{font-family:'irSans'!important;font-weight:800!important}.fsize-10{font-size:10px!important}.fsize-11{font-size:11px!important}.fsize-12{font-size:12px!important}.fsize-13{font-size:13px!important}.fsize-14{font-size:14px!important}.fsize-15{font-size:15px!important}.fsize-16{font-size:16px!important}.fsize-17{font-size:17px!important}.fsize-18{font-size:18px!important}.fsize-19{font-size:19px!important}.fsize-20{font-size:20px!important}.fsize-20{font-size:20px!important}.fsize-21{font-size:21px!important}.fsize-22{font-size:22px!important}.fsize-23{font-size:23px!important}.fsize-24{font-size:24px!important}.fsize-25{font-size:25px!important}.fsize-26{font-size:26px!important}.fsize-27{font-size:27px!important}.fsize-28{font-size:28px!important}.fsize-29{font-size:29px!important}.fsize-30{font-size:30px!important}.fsize-31{font-size:31px!important}.fsize-32{font-size:32px!important}.fsize-33{font-size:33px!important}.fsize-34{font-size:34px!important}.fsize-35{font-size:35px!important}.fsize-36{font-size:36px!important}.fsize-37{font-size:37px!important}.fsize-38{font-size:38px!important}.fsize-39{font-size:39px!important}.fsize-40{font-size:40px!important}
+h1,h2,h3,h4,h5,h6{
+	font-family: 'irSans' !important;
+	color: #323232;
+}
+h1{
+	font-size: 2.5rem !important;
+	font-weight: normal;
+}
+h2{
+	font-size: 2rem !important;
+	font-weight: bold !important;
+}
+h3{
+	font-size: 1.75rem !important;
+	font-weight: bold !important;
+}
+h4{
+	font-size: 1.5rem !important;
+	font-weight: bold !important;
+}
+h5{
+	font-size: 1.25rem !important;
+	font-weight: bold !important;
+}
+h6{
+	font-size: 1rem !important;
+	font-weight: bold !important;
+}

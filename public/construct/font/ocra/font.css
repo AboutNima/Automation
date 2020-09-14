@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'ocra';
+  src: url('OcrA.eot');
+  src: url('OcrA.eot?#iefix') format('embedded-opentype'),
+       url('OcrA.svg#OcrA') format('svg'),
+       url('OcrA.ttf') format('truetype'),
+       url('OcrA.woff') format('woff'),
+       url('OcrA.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+

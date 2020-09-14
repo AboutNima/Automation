@@ -1,0 +1,496 @@
+.input-mask{
+
+    // Set font family
+    @fontFamily: 'irSans';
+
+    // Transition
+    .transition(){
+        transition: all ease 0.1s;
+    }
+
+    // (*========*) //
+    .disableTextSelect();
+    font-family: @fontFamily !important;
+    font-weight: normal !important;
+    position: relative;
+    width: 100%;
+    margin-top: 40px;
+    padding-bottom: 10px;
+    &.no-mask-margin{
+        margin-top: 10px !important;
+    }
+    // (*========*) //
+
+    // Colors
+    @background-color: #f5f5f5;
+    @border-color: #f5f5f5;
+
+    // Default css
+    input[type=reset]{
+        font-family: @fontFamily;
+    }
+    .input-select,
+    textarea,
+    input[type=email],
+    input[type=password],
+    input[type=tel],
+    input[type=text],
+    input[type=number],
+    input[type=search],
+    select{
+        box-sizing : border-box;
+        font-family: @fontFamily;
+        border: 1px solid @border-color;
+        background: @background-color;
+        border-radius: 2px;
+        width: 100%;
+        max-width: 100%;
+        line-height: 1.4;
+        font-size: 14px !important;
+        color: .uiColors[dark];
+        padding: 11px 17px;
+        .transition();
+        &[disabled]{
+            background: darken(@background-color,3);
+            cursor: no-drop;
+        }
+        &:focus{
+            outline: 0;
+            box-shadow: 0px 0px 0px 3px rgba(0,0,0,0.1);
+        }
+        &::placeholder{
+            .hiddenText(10px);
+            font-family: @fontFamily;
+            font-weight: 300 !important;
+        }
+    }
+    input[type=number]{
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+    textarea{
+        min-width: 100%;
+    }
+
+    // Start button
+    button{
+        margin: 0;
+        font-family: @fontFamily;
+        &[disabled]{
+            opacity: 0.8;
+            cursor: no-drop;
+        }
+        i{
+            @-webkit-keyframes ajax-request {
+                0% {
+                    -webkit-transform: rotate(0);
+                    transform: rotate(0);
+                }
+                100% {
+                    -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg);
+                }
+            }
+            @keyframes ajax-request {
+                0% {
+                    -webkit-transform: rotate(0);
+                    transform: rotate(0);
+                }
+                100% {
+                    -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg);
+                }
+            }
+            vertical-align: middle;
+            margin-right: 10px;
+            -webkit-animation: ajax-request 1s cubic-bezier(0.645, 0.045, 0.355, 1.000) infinite both;
+            animation: ajax-request 1s cubic-bezier(0.645, 0.045, 0.355, 1.000) infinite both;
+        }
+    }
+
+    // Start label
+    .input-label{
+        padding: 7px 0;
+        margin-top: -40px;
+        p{
+            font-size: 15px;
+            i{
+                font-size: 7px;
+                color: .uiColors[danger] !important;
+                margin-left: 8px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    // Start select
+    .input-select{
+        position: relative;
+        width: 100%;
+        cursor: pointer;
+        i{
+            transition: transform ease 0.1s;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            vertical-align: middle;
+            font-weight: 500;
+        }
+        p{
+            .hiddenText(90%);
+        }
+        .menu{
+            display: none;
+            z-index: 1;
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.12);
+            max-height: 300px;
+            overflow: auto;
+            .scrollBar();
+            & > input{
+                display: none;
+            }
+            .search{
+                cursor: context-menu;
+                padding: 15px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .option{
+                & > p{
+                    position: relative;
+                    padding: 15px;
+                    display: block;
+                    font-size: 13px;
+                    cursor: pointer;
+                }
+                & > span,div{
+                    .transition();
+                    position: relative;
+                    padding: 15px;
+                    display: block;
+                    font-size: 13px;
+                    cursor: pointer;
+                    &:not(:last-child){
+                        border-bottom: 1px dashed #e6e6e6;
+                    }
+                    &:hover{
+                        background: #fafafa;
+                    }
+                    p{
+                        font-size: 13px;
+                        &.toolbar{
+                            position: absolute;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            left: 15px;
+                            padding: 5px 11px;
+                            border-radius: 2px;
+                            background: lighten(.uiColors[dark],5);
+                            color: .uiColors[white];
+                            font-size: 11px;
+                        }
+                    }
+                }
+                div{
+                    p{
+                        .hiddenText(50%);
+                        &.toolbar{
+                            left: 45px;
+                        }
+                    }
+                    span{
+                        .transition();
+                        position: absolute;
+                        left: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 14px;
+                        height: 14px;
+                        border-radius: 2px;
+                        background: darken(@background-color,5);
+                        vertical-align: middle;
+                        border: 1px solid darken(@background-color,15);
+                        &:before{
+                            .transition();
+                            content: '\f00c';
+                            font-family: "Font Awesome 5 Pro";
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            transform: translate(-50%,-50%);
+                            color: transparent;
+                            font-size: 9px;
+                        }
+                    }
+                    input{
+                        display: none;
+                    }
+                    &.active,&:hover{
+                        background: #fafafa;
+                    }
+                    &.active{
+                        span{
+                            border-color: .uiColors[primary];
+                            background: .uiColors[primary];
+                            &:before{
+                                color: #fff;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        &.active{
+            box-shadow: 0px 0px 0px 3px rgba(0,0,0,0.1);
+            i{
+                transform: translateY(-50%) !important;
+            }
+            .menu{
+                display: block;
+            }
+        }
+    }
+
+    // Start radio
+    .radio{
+        width: 100%;
+        display: table;
+        .item{
+            display: table-cell;
+            label{
+                cursor: pointer;
+                p,span{
+                    display: inline-block;
+                }
+                span{
+                    .transition();
+                    position: relative;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 50%;
+                    background: darken(@background-color,5);
+                    margin-top: 2px;
+                    vertical-align: middle;
+                    border: 1px solid darken(@background-color,15);
+                    &:before{
+                        .transition();
+                        content: '\f111';
+                        font-family: "Font Awesome 5 Pro";
+                        font-weight: bold;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%,-50%);
+                        color: transparent;
+                        font-size: 4px;
+                    }
+                }
+                p{
+                    margin-right: 6px;
+                    color: #353535;
+                }
+            }
+            &.active{
+                label{
+                    span{
+                        border-color: .uiColors[primary];
+                        background: .uiColors[primary];
+                        &:before{
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+            input{
+                display: none;
+            }
+        }
+    }
+
+    // Start checkbox
+    .checkbox{
+        width: 100%;
+        display: table;
+        .item{
+            display: table-cell;
+            label{
+                cursor: pointer;
+                p,span{
+                    display: inline-block;
+                }
+                span{
+                    .transition();
+                    position: relative;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 2px;
+                    background: darken(@background-color,5);
+                    margin-top: 2px;
+                    vertical-align: middle;
+                    border: 1px solid darken(@background-color,15);
+                    &:before{
+                        .transition();
+                        content: '\f00c';
+                        font-family: "Font Awesome 5 Pro";
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%,-50%);
+                        color: transparent;
+                        font-size: 9px;
+                    }
+                }
+                p{
+                    margin-right: 6px;
+                    color: #353535;
+                }
+            }
+            &.active{
+                label{
+                    span{
+                        border-color: .uiColors[primary];
+                        background: .uiColors[primary];
+                        &:before{
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+            input{
+                display: none;
+            }
+        }
+    }
+
+    // Start tag
+    .tag{
+        margin: 15px -3px -3px 0;
+        ul{
+            li{
+                margin: 2.5px;
+                cursor: pointer;
+                display: inline-block;
+                input{
+                    display: none;
+                }
+            }
+        }
+    }
+
+    // Start upload
+    .upload{
+        width: 100%;
+        border: 1px dashed darken(@border-color,15);
+        border-radius: 5px;
+        background: @background-color;
+        input[type=file]{
+            display: none;
+        }
+        .drop-zone{
+            padding: 20px 0;
+            cursor: pointer;
+            position: relative;
+            text-align: center;
+            .body{
+                i{
+                    color: .uiColors[success];
+                    font-size: 45px;
+                    display: block;
+                    transition: all ease 0.1s;
+                }
+                & > p{
+                    margin-top: 10px;
+                    transition: all 0.1s;
+                    font-size: 14px;
+                }
+                .info{
+                    transition: all 0.1s;
+                    margin-top: 10px;
+                    p{
+                        font-size: 12px;
+                        color: #656565;
+                        font-weight: 500;
+                        direction: ltr;
+                        span{
+                            color: #2f2f2f !important;
+                        }
+                    }
+                }
+            }
+        }
+        .list{
+            display: none;
+            width: 100%;
+            border-top: 1px dashed darken(@border-color,15);
+            ul{
+                cursor: context-menu;
+                padding: 10px;
+                li{
+                    .clearFix();
+                    display: block;
+                    padding: 8px 10px;
+                    padding-top: 10px;
+                    border-radius: 3px;
+                    line-height: 1;
+                    background: #ececec;
+                    p{
+                        direction: ltr;
+                        float: left;
+                        font-size: 12px;
+                        font-weight: 500;
+                        .hiddenText(50%)
+                    }
+                    i,span{
+                        float: right;
+                    }
+                    i{
+                        cursor: pointer;
+                        font-size: 17px;
+                        vertical-align: middle;
+                        color: .uiColors[danger];
+                        padding: 4px 7px;
+                        margin: -7px;
+                    }
+                    span{
+                        font-size: 12px;
+                        font-weight: 500;
+                        color: .uiColors[primary];
+                        margin-right: 10px;
+                    }
+                    &:not(:first-child){
+                        margin-top: 5px;
+                    }
+                }
+            }
+            &.active{
+                display: block;
+            }
+        }
+        &.active{
+            border-color: .uiColors[success];
+            .drop-zone{
+                .body{
+                    i{
+                        margin-top: 30px;
+                        margin-bottom: -30px;
+                    }
+                    & > p,.info{
+                        opacity: 0;
+                    }
+                }
+            }
+            .list{
+                border-color: .uiColors[success];
+            }
+        }
+    }
+
+}

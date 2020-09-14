@@ -1,0 +1,93 @@
+.popup{
+    //Popup sizing
+    .popupSize(){
+        xs: 460px;
+        sm: 580px;
+        md: 695px;
+        lmd: 850px;
+        lg: 910px;
+        xl: 1030px;
+    };
+
+    //Popup setting
+    @popupBr: 5px;
+
+    .scrollBar();
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    padding: 75px 0;
+    overflow-y: auto;
+
+    .popup-content{
+        box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        position: absolute;
+        transform: translateX(-50%) scale(0.9);
+        left: 50%;
+        width: .popupSize[md];
+        top: 125px;
+        transition: top ease 0.25s,transform ease 0.25s;
+        margin-bottom: 75px;
+        &.xs{
+            width: .popupSize[xs];
+        }
+        &.sm{
+            width: .popupSize[sm];
+        }
+        &.md{
+            width: .popupSize[md];
+        }
+        &.lmd{
+            width: .popupSize[lmd];
+        }
+        &.lg{
+            width: .popupSize[lg];
+        }
+        &.xl{
+            width: .popupSize[xl];
+        }
+
+        .popup-header{
+            .disableTextSelect();
+            background: #303030;
+            height: 50px;
+            padding: 0 25px;
+            border-radius: @popupBr @popupBr 0 0;
+
+            p{
+                .hiddenText(100%-20px);
+                float: right;
+                padding: 0;
+                margin: 0;
+                font-size: 13px;
+            }
+            span{
+                float: left;
+                cursor: pointer;
+                padding: 0 15px;
+                font-size: 18px;
+                margin-left: -15px;
+
+                i{
+                    vertical-align: middle;
+                }
+            }
+            p,span{
+                line-height: 50px;
+                color: .uiColors[white];
+            }
+        }
+        .popup-body{
+            padding: 30px 25px;
+            border-radius: 0 0 @popupBr @popupBr;
+            background: white;
+        }
+    }
+}

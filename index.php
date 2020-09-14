@@ -120,7 +120,22 @@ switch($urlPath[0])
 							else require_once 'app/controller/account/admin/mechanizedScanning/tools/list.php';
 							break;
 						case 'equipments':
-
+							if(!empty($id=(int)$urlPath[3]))
+							{
+								switch($urlPath[4])
+								{
+									case 'information':
+										require_once 'app/controller/account/admin/mechanizedScanning/equipments/information.php';
+										break;
+									case 'history':
+										require_once 'app/controller/account/admin/mechanizedScanning/equipments/history.php';
+										break;
+									default:
+										header('location:/404');
+										break;
+								}
+							}
+							else require_once 'app/controller/account/admin/mechanizedScanning/equipments/list.php';
 							break;
 					}
 					break;

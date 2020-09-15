@@ -45,7 +45,7 @@
                                 ?>
                                     <span class="label label-danger"> ثبت نشده </span>
                                 <?php
-                                else: echo $item->propertyNumber; endif;
+                                else: echo sprintf('%04d',$item->propertyNumber); endif;
                                 ?>
                             </td>
                             <?php

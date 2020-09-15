@@ -46,7 +46,7 @@ $(document).ready(function()
         $.post('/ajax/account/admin/mechanizedScanning/tools/getScannedData',{code:code},function(data)
         {
             data=$.parseJSON(data)
-            if(data.data===null) validationMessage(false,data.msg,data.type,data.err,'#edit .validation-message')
+            if(data.data===null) validationMessage(2000,data.msg,data.type,data.err,'#scan .validation-message')
             else{
                 data=$.parseJSON(data.data)
                 if(Array.isArray(data))

@@ -77,15 +77,6 @@ switch($urlPath[1])
 												]);
 											}
 											break;
-										case 'getSubData':
-											if(isset($_POST['id']))
-											{
-												$_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID']=$_POST['id'];
-												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MST',[
-													'type','size','company','description','count'
-												]);
-											}
-											break;
 										case 'edit':
 											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['EDIT']['ID']))
@@ -191,13 +182,21 @@ switch($urlPath[1])
 												}
 											}
 											break;
+										case 'getSubData':
+											if(isset($_POST['id']))
+											{
+												$_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MST',[
+													'size','company','description','count'
+												]);
+											}
+											break;
 										case 'editSub':
 											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID']))
 											{
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
-													'type'=>['required[دسته بندی]','in[انتخاب,دسته بندی]:'.implode(',',array_keys(ToolsType))],
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
 													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
@@ -230,6 +229,131 @@ switch($urlPath[1])
 												}
 											}
 											break;
+										case 'getScannedData':
+											if(isset($_POST['code']))
+											{
+												$code=explode('.',$_POST['code'])[0];
+												$data=$db->where('QRCode',$code)->objectBuilder()->getOne('MST',[
+													'id','type','count'
+												]);
+												if(empty($data))
+												{
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>'موردی پیدا نشد',
+														'err'=>0,
+														'data'=>null
+													]));
+												}else{
+													$data->type=strtr($data->type,ToolsType);
+													$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']=[
+														'ID'=>$data->id,
+														'COUNT'=>$data->count
+													];
+													$sub=$db->where('subId',$data->id)->get('MST',null,[
+														'id','size'
+													]);
+													if(!empty($sub))
+													{
+														foreach($sub as &$item) $item['type']=strtr($item['type'],ToolsType);
+														$data=[$data,$sub];
+														$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']=true;
+													}
+													die(json_encode([
+														'err'=>null,
+														'data'=>json_encode($data)
+													]));
+												}
+											}
+											break;
+										case 'record':
+											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID']))
+											{
+												$data=$_POST['data'];
+												$rules=[
+													'studentId'=>[
+														'required[انتخاب کارآموز]',
+														'in[انتخاب,کارآموز]:0,1,2'
+													],
+													'count'=>['required[موجودی]','numeric[موجودی]'],
+													'type'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
+												];
+												if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']))
+												{
+													$rules['subToolId']=[
+														'required[ابزار های زیر مجموعه]',
+														'in[انتخاب,ابزار های زیر مجموعه]:'.implode(',',array_column($db->where('subId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->get('MST',null,'id'),'id'))
+													];
+												}else unset($data['subToolId']);
+												$validation=new Validation($data,$rules);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												if($data['type']=='0')
+												{
+													$check=$db->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
+													where('subToolId',$data['subToolId'])->where('type','0')->getValue('MSTHistory','COUNT(id)');
+													$toolCount=isset($data['subToolId']) ? $db->where('id',$data['subToolId'])->getOne('MST','count')['count'] : $_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['COUNT'];
+													if($toolCount-$check>=$data['count'])
+													{
+														for($i=0;$i<$data['count'];$i++) $id=$db->insert('MSTHistory',[
+															'studentId'=>$data['studentId'],
+															'subToolId'=>$data['subToolId'],
+															'type'=>$data['type'],
+															'toolId'=>$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID']
+														]);
+														if((bool)$id)
+														{
+															die(json_encode([
+																'type'=>'success',
+																'msg'=>'درخواست شما با موفقیت انجام شد',
+																'err'=>null,
+																'data'=>null
+															]));
+														}else{
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																'err'=>-2,
+																'data'=>null
+															]));
+														}
+													}else{
+														die(json_encode([
+															'type'=>'danger',
+															'msg'=>'موجودی انبار کمتر از میزان درخواست شما میباشد',
+															'err'=>0,
+															'data'=>null
+														]));
+													}
+												}else{
+													$check=$db->where('studentId',$data['studentId'])->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
+													where('subToolId',$data['subToolId'])->where('type','0')->update('MSTHistory',['type'=>'1'],$data['count']);
+													if($db->count>0)
+													{
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'تعداد '.$db->count.' ابزار تحویل گرفته شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'موردی جهت بازگشت به انار یافت نشد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}
+												}
+											}
+											break;
 									}
 									break;
 								case 'equipments':
@@ -242,7 +366,7 @@ switch($urlPath[1])
 												if(!isset($data['accessories'])) $data['accessories']=0;
 												$validation=new Validation($data,[
 													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
-													'brand'=>['length[برند,حداکثر,100]:max,100'],
+													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
@@ -258,7 +382,7 @@ switch($urlPath[1])
 													]));
 												}
 												$data['QRCode']=randomText(25);
-												$id=$db->insert('Eq',$data);
+												$id=$db->insert('MSE',$data);
 												if((bool)$id){
 													die(json_encode([
 														'type'=>'success',
@@ -289,7 +413,7 @@ switch($urlPath[1])
 											if(isset($_POST['id']))
 											{
 												$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']=$_POST['id'];
-												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Eq',[
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MSE',[
 													'type','size','company','propertyNumber','description','count'
 												]);
 											}
@@ -301,7 +425,7 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
-													'brand'=>['length[برند,حداکثر,100]:max,100'],
+													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
@@ -317,7 +441,7 @@ switch($urlPath[1])
 													]));
 												}
 												$check=$db->where('id',$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID'])->
-												update('Eq',$data,1);
+												update('MSE',$data,1);
 												if($check)
 												{
 													die(json_encode([

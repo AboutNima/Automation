@@ -172,19 +172,6 @@
 		<input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
 		<div class="row">
 			<div class="col-sm-6">
-				<div class="input-mask required type" mask-type="select:search" mask-label="دسته بندی">
-                    <select name="data[type]">
-                        <?php
-                        foreach(ToolsType as $key=>$item):
-                        ?>
-                            <option value="<?php echo $key ?>"><?php echo $item ?></option>
-						<?php
-                        endforeach;
-                        ?>
-                    </select>
-				</div>
-			</div>
-			<div class="col-sm-6">
 				<div class="input-mask required" mask-type mask-label="سایز">
 					<input type="text" name="data[size]" placeholder="سایز را اینجا وارد کنید" autocomplete="off">
 				</div>

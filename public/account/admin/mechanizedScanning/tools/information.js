@@ -15,7 +15,6 @@ $(document).ready(function()
         $.post('/ajax/account/admin/mechanizedScanning/tools/getSubData',{id:$(this).attr('data-id')},function(data)
         {
             data=$.parseJSON(data)[0]
-            changeSelect('#edit .type',$.parseJSON(data.type))
             $("#edit input[name='data[size]']").val(data.size);
             $("#edit input[name='data[company]']").val(data.company);
             $("#edit input[name='data[count]']").val(data.count);

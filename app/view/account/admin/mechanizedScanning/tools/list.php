@@ -48,8 +48,18 @@
                                 else: echo $item->propertyNumber; endif;
                                 ?>
                             </td>
-                            <td><?php echo $item->count ?></td>
-                            <td>0</td>
+                            <?php
+                            if(empty($item->subCount)):
+                            ?>
+                                <td colspan="2"><span class="label label-warning"><?php echo $item->count ?> ابزار زیر مجموعه </span></td>
+                            <?php
+                            else:
+                            ?>
+                                <td><?php echo $item->count ?></td>
+                                <td><?php echo $item->count-$item->inUse ?></td>
+                            <?php
+                            endif;
+                            ?>
                             <td>
 								<?php
 								if(empty($item->description)):
@@ -195,8 +205,54 @@
 		</div>
 	</form>
 </div>
-<div class="popup" popup-size="md" popup-title="اسکن ابزار" id="scan">
-    <button class="btn btn-success" id="startScan"> اسکن با دوربین </button>
-	<div class="validation-message no-margin top"></div>
-    <p></p>
+<div class="popup" popup-size="sm" popup-title="اسکن ابزار" id="scan">
+    <div class="validation-message no-margin top"></div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="input-mask no-mask-margin" mask-type>
+                <input type="text" placeholder="کد QR را اسکن کنید">
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-mask no-mask-margin">
+                <button class="btn btn-warning d-block" style="width: 100%;" id="startScan"> اسکن با دوربین </button>
+            </div>
+        </div>
+    </div>
+    <p class="text-danger fsize-13 mt-0 fism"> * توجه داشته باشید در صورت استفاده از بارکد اسکنر حتما فیلد بالا در حالت انتخاب باشد </p>
+    <form action="/ajax/account/admin/mechanizedScanning/tools/record" style="display: none" class="ajax-handler" method="post">
+        <input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
+        <div class="hr"></div>
+        <h6></h6>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <div class="input-mask required" mask-type="select:search" mask-label="انتخاب کارآموز">
+                    <select name="data[studentId]">
+                        <option value="0" toolbar="test"> نیما اسعدی </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-12" id="sub">
+                <div class="input-mask required" mask-type="select:search" mask-label="ابزار های زیر مجموعه">
+                    <select name="data[subToolId]"></select>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-mask required" mask-type mask-label="تعداد درخواست">
+                    <input type="text" placeholder="تعداد را وارد کنید" name="data[count]">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-mask required" mask-type="radio" mask-label="وضعیت">
+                    <input type="radio" value="0" label="تحویل دادن" name="data[type]" checked>
+                    <input type="radio" value="1" label="تحویل گرفتن" name="data[type]">
+                </div>
+            </div>
+        </div>
+        <div class="hr"></div>
+        <div class="input-mask no-mask-margin">
+            <button class="btn btn-purple"> ذخیره </button>
+        </div>
+    </form>
 </div>

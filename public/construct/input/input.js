@@ -124,8 +124,7 @@ $(document).ready(function()
                     }).on('click','.menu',function(e){
                         e.stopPropagation()
                     })
-                    option=select.find('.menu .option span')
-                    option.click(function(){
+                    select.on('click','.menu .option span',function(){
                         select.find('> p').html($(this).clone().children().remove().end().text())
                         select.find('.menu > input').val($(this).attr('value'))
                         $(this).closest('.input-select').removeClass('active')
@@ -136,8 +135,7 @@ $(document).ready(function()
                         select.addClass('active')
                     })
                     option=select.find('.menu .option div')
-                    option.click(function()
-                    {
+                    select.on('click','.menu .option div',function(){
                         var input=$(this).find('input')
                         if(input.is(':checked'))
                         {

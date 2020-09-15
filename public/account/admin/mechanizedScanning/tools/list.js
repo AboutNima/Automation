@@ -34,10 +34,50 @@ $(document).ready(function()
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })
+
     $('#startScan').qrCodeReader({
-        callback: function(codes)
+        callback: function(code)
         {
-            $('#scan p').html(codes)
+            sendQRCode(code)
         }
+    })
+    function sendQRCode(code)
+    {
+        $.post('/ajax/account/admin/mechanizedScanning/tools/getScannedData',{code:code},function(data)
+        {
+            data=$.parseJSON(data)
+            if(data.data===null) validationMessage(false,data.msg,data.type,data.err,'#edit .validation-message')
+            else{
+                data=$.parseJSON(data.data)
+                if(Array.isArray(data))
+                {
+                    var sub=data[1];
+                    $('#sub .option').html('').show()
+                    $.each(sub,function(i,a)
+                    {
+                        $('#sub .option').append(
+                            "<span value='"+a.id+"'>"+a.size+"</span>"
+                        )
+                    })
+                    data=data[0];
+                }else{
+                    $('#sub').hide()
+                }
+                $('#scan form').show(0)
+                $('#scan form h6').html(data.type)
+            }
+        })
+    }
+    $(document).on('submit','#scan form',function(e)
+    {
+        e.preventDefault();
+        ajaxHandler($(this),false).done(function(data)
+        {
+            ajaxT.html(data)
+            return false;
+            data=$.parseJSON(data)
+            validationMessage(false,data.msg,data.type,data.err,'#add .validation-message')
+            if(data.err==null) setTimeout(function(){location.reload()},1500)
+        })
     })
 })

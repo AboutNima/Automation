@@ -23,7 +23,7 @@
 					<th> ردیف </th>
 					<th> نام </th>
 					<th> شماره اموال </th>
-					<th> برند (نام تجاری) </th>
+					<th> شرکت سازنده (نام تجاری) </th>
 					<th> لوازم جانبی </th>
 					<th> تعداد </th>
 					<th> وضعیت </th>
@@ -43,11 +43,11 @@
 							<td><?php echo $item->propertyNumber; ?></td>
 							<td>
                                 <?php
-                                    if(empty($item->brand)):
+                                    if(empty($item->company)):
                                 ?>
                                 <span class="label label-warning"> ثبت نشده </span>
                                 <?php
-                                    else: echo $item->brand; endif;
+                                    else: echo $item->company; endif;
                                 ?>
                             </td>
 							<td>
@@ -118,8 +118,8 @@
 				</div>
 			</div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="برند (نام تجاری)">
-                    <input type="text" name="data[brand]" placeholder="برند را اینجا وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+                    <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-6">
@@ -168,8 +168,8 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="برند (نام تجاری)">
-                    <input type="text" name="data[brand]" placeholder="برند را اینجا وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+                    <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-6">

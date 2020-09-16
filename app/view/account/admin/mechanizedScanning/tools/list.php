@@ -64,7 +64,7 @@
 								<?php
 								if(empty($item->description)):
 								?>
-                                    <span class="label label-danger"> ثبت نشده </span>
+                                    <span class="label label-warning"> ثبت نشده </span>
 								<?php
 								else: echo $item->description; endif;
 								?>
@@ -74,7 +74,7 @@
 								<?php
 								if(empty($item->size)):
 									?>
-                                    <span class="label label-danger"> ثبت نشده </span>
+                                    <span class="label label-warning"> ثبت نشده </span>
 								<?php
 								else: echo $item->size; endif;
 								?>

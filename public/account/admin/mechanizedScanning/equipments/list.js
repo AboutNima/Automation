@@ -15,12 +15,11 @@ $(document).ready(function()
         $.post('/ajax/account/admin/mechanizedScanning/equipments/getData',{id:$(this).attr('data-id')},function(data)
         {
             data=$.parseJSON(data)[0]
-            $("#edit input[name='data[name]']").val(data.name);
-            $("#edit input[name='data[brand]']").val(data.brand);
+            $("#edit input[name='data[title]']").val(data.title);
+            $("#edit input[name='data[company]']").val(data.company);
             $("#edit input[name='data[propertyNumber]']").val(data.propertyNumber);
             $("#edit input[name='data[accessories]']").val(data.accessories);
             $("#edit input[name='data[count]']").val(data.count);
-            $("#edit input[name='data[status]']").val(data.status);
             $("#edit textarea").val(data.description);
             activePopup('#edit')
         })

@@ -413,7 +413,7 @@ switch($urlPath[1])
 											{
 												$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']=$_POST['id'];
 												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MSE',[
-													'type','size','company','propertyNumber','description','count'
+													'title','company','propertyNumber','accessories','count','status','description'
 												]);
 											}
 											break;

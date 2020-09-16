@@ -20,6 +20,9 @@ $(document).ready(function()
             $("#edit input[name='data[propertyNumber]']").val(data.propertyNumber);
             $("#edit input[name='data[accessories]']").val(data.accessories);
             $("#edit input[name='data[count]']").val(data.count);
+            $("#edit input[name='data[accessories]']").prop('checked',true).click()
+            if(data.accessories=='1') $("#edit input[name='data[accessories]']").click()
+            $("#edit input[name='data[status]'][value='"+data.status+"']").click()
             $("#edit textarea").val(data.description);
             activePopup('#edit')
         })

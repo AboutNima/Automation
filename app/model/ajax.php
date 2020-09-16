@@ -364,13 +364,13 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												if(!isset($data['accessories'])) $data['accessories']=0;
 												$validation=new Validation($data,[
-													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
+													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[تعداد]','numeric[تعداد]'],
-													'status'=>'in[انتخاب,وضعیت]:0,1'
+													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1,2']
 												]);
 												if($validation->getStatus()){
 													die(json_encode([
@@ -422,14 +422,15 @@ switch($urlPath[1])
 											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']))
 											{
 												$data=$_POST['data'];
+												if(!isset($data['accessories'])) $data['accessories']=0;
 												$validation=new Validation($data,[
-													'name'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
+													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[تعداد]','numeric[تعداد]'],
-													'status'=>'in[انتخاب,وضعیت]:0,1'
+													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1,2']
 												]);
 												if($validation->getStatus()){
 													die(json_encode([

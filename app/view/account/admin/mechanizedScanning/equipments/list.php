@@ -40,7 +40,7 @@
 						<tr>
 							<td><?php echo $num++ ?></td>
 							<td><?php echo $item->title; ?></td>
-							<td><?php echo $item->propertyNumber; ?></td>
+							<td><?php echo sprintf('%04d',$item->propertyNumber); ?></td>
 							<td>
                                 <?php
                                 if(empty($item->company)):

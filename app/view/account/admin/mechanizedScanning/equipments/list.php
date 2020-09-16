@@ -39,7 +39,7 @@
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
-							<td><?php echo $item->name; ?></td>
+							<td><?php echo $item->title; ?></td>
 							<td><?php echo $item->propertyNumber; ?></td>
 							<td>
                                 <?php
@@ -114,7 +114,7 @@
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="input-mask required" mask-type mask-label="نام">
-                    <input type="text" name="data[name]" placeholder="نام تجهیزات را وارد کنید" autocomplete="off">
+                    <input type="text" name="data[title]" placeholder="نام تجهیزات را وارد کنید" autocomplete="off">
 				</div>
 			</div>
             <div class="col-sm-6">
@@ -164,7 +164,7 @@
 		<div class="row">
             <div class="col-sm-6">
                 <div class="input-mask required" mask-type mask-label="نام">
-                    <input type="text" name="data[name]" placeholder="نام تجهیزات را وارد کنید" autocomplete="off">
+                    <input type="text" name="data[title]" placeholder="نام تجهیزات را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-6">

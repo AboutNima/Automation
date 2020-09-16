@@ -20,9 +20,9 @@ function randomCode($length=5)
 	for($i=0;$i<$length;$i++) $output.=rand(0,9);
 	return $output;
 }
-function humanTiming($time)
+function humanTiming($time,$fromNow=true)
 {
-	$time=strtotime('now')-$time;
+	if($fromNow) $time=strtotime('now')-$time;
 	$time=($time<1)?1:$time;
 	$tokens=array(
 		31536000=>'سال',
@@ -36,7 +36,7 @@ function humanTiming($time)
 	foreach($tokens as $unit=>$text){
 		if($time<$unit) continue;
 		$numberOfUnits=floor($time/$unit);
-		return $numberOfUnits.' '.$text.' پیش';
+		return $numberOfUnits.' '.$text.($fromNow==true ? ' پیش' : '');
 	}
 }
 function convertToGregorian($date,$delimiter='/')

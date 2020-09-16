@@ -5,7 +5,7 @@ objectBuilder()->getOne('MST',[
 ]);
 if(empty($data)) die(header('location:/404'));
 $sub=$db->where('subId',$id)->objectBuilder()->get('MST',null,[
-	'id','propertyNumber','company','count','description','size'
+	'id','propertyNumber','count','description','size'
 ]);
 $_SESSION['DATA']['MechanizedScanning']['Tools']=[
 	'ID'=>$id,

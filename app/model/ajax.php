@@ -22,7 +22,7 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'type'=>['required[دسته بندی]','in[انتخاب,دسته بندی]:'.implode(',',array_keys(ToolsType))],
-													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
+													'size'=>['length[سایز,حداکثر,10]:max,10'],
 													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
@@ -84,7 +84,7 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'type'=>['required[دسته بندی]','in[انتخاب,دسته بندی]:'.implode(',',array_keys(ToolsType))],
-													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
+													'size'=>['length[سایز,حداکثر,10]:max,10'],
 													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
@@ -136,9 +136,8 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
-													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
+													'count'=>['required[موجودی]','numeric[موجودی]'],
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
-													'count'=>['required[موجودی]','numeric[موجودی]']
 												]);
 												if($validation->getStatus()){
 													die(json_encode([
@@ -198,9 +197,8 @@ switch($urlPath[1])
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
-													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
+													'count'=>['required[موجودی]','numeric[موجودی]'],
 													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
-													'count'=>['required[موجودی]','numeric[موجودی]']
 												]);
 												if($validation->getStatus()){
 													die(json_encode([
@@ -255,7 +253,6 @@ switch($urlPath[1])
 													]);
 													if(!empty($sub))
 													{
-														foreach($sub as &$item) $item['type']=strtr($item['type'],ToolsType);
 														$data=[$data,$sub];
 														$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']=true;
 													}
@@ -277,7 +274,7 @@ switch($urlPath[1])
 														'in[انتخاب,کارآموز]:0,1,2'
 													],
 													'count'=>['required[موجودی]','numeric[موجودی]'],
-													'type'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
+													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
 												];
 												if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']))
 												{
@@ -295,17 +292,18 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}
-												if($data['type']=='0')
+												if($data['status']=='0')
 												{
+													if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])) $db->where('subToolId',$data['subToolId']);
 													$check=$db->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
-													where('subToolId',$data['subToolId'])->where('type','0')->getValue('MSTHistory','COUNT(id)');
-													$toolCount=isset($data['subToolId']) ? $db->where('id',$data['subToolId'])->getOne('MST','count')['count'] : $_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['COUNT'];
+													where('status','0')->getValue('MSTHistory','COUNT(id)');
+													$toolCount=isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']) ? $db->where('id',$data['subToolId'])->getOne('MST','count')['count'] : $_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['COUNT'];
 													if($toolCount-$check>=$data['count'])
 													{
 														for($i=0;$i<$data['count'];$i++) $id=$db->insert('MSTHistory',[
 															'studentId'=>$data['studentId'],
-															'subToolId'=>$data['subToolId'],
-															'type'=>$data['type'],
+															'subToolId'=>isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']) ? $data['subToolId'] : null,
+															'status'=>$data['status'],
 															'toolId'=>$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID']
 														]);
 														if((bool)$id)
@@ -333,8 +331,9 @@ switch($urlPath[1])
 														]));
 													}
 												}else{
+													if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])) $db->where('subToolId',$data['subToolId']);
 													$check=$db->where('studentId',$data['studentId'])->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
-													where('subToolId',$data['subToolId'])->where('type','0')->update('MSTHistory',['type'=>'1'],$data['count']);
+													where('status','0')->update('MSTHistory',['status'=>'1'],$data['count']);
 													if($db->count>0)
 													{
 														die(json_encode([
@@ -346,8 +345,8 @@ switch($urlPath[1])
 													}else{
 														die(json_encode([
 															'type'=>'warning',
-															'msg'=>'موردی جهت بازگشت به انار یافت نشد',
-															'err'=>null,
+															'msg'=>'موردی جهت بازگشت به انبار یافت نشد',
+															'err'=>0,
 															'data'=>null
 														]));
 													}

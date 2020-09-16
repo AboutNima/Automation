@@ -81,7 +81,6 @@
                     <th> موجودی فعلی </th>
                     <th> توضیحات </th>
                     <th> اندازه </th>
-                    <th> شرکت سازنده </th>
                     <th> گزینه ها </th>
                 </tr>
                 </thead>
@@ -105,7 +104,6 @@
 								?>
                             </td>
                             <td><?php echo $item->size ?></td>
-                            <td><?php echo $item->company ?></td>
                             <td>
                                 <div class="more">
                                     <div class="item">
@@ -143,18 +141,13 @@
 				</div>
 			</div>
             <div class="col-sm-6">
-                <div class="input-mask required" mask-type mask-label="شرکت سازنده">
-                    <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="موجودی">
+                    <input type="number" name="data[count]" placeholder="موجودی را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-12">
                 <div class="input-mask" mask-type mask-label="توضیحات">
                     <textarea name="data[description]" rows="3"></textarea>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="input-mask required" mask-type mask-label="موجودی">
-                    <input type="number" name="data[count]" placeholder="موجودی را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
         </div>
@@ -177,18 +170,13 @@
 				</div>
 			</div>
             <div class="col-sm-6">
-                <div class="input-mask required" mask-type mask-label="شرکت سازنده">
-                    <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="موجودی">
+                    <input type="number" name="data[count]" placeholder="موجودی را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-12">
                 <div class="input-mask" mask-type mask-label="توضیحات">
                     <textarea name="data[description]" rows="3"></textarea>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="input-mask required" mask-type mask-label="موجودی">
-                    <input type="number" name="data[count]" placeholder="موجودی را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
         </div>

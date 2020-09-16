@@ -11,54 +11,45 @@
 				<thead>
 				<tr>
 					<th> ردیف </th>
-					<th> موجودی کل </th>
-					<th> موجودی فعلی </th>
-					<th> توضیحات </th>
-					<th> اندازه </th>
-					<th> شرکت سازنده </th>
-					<th> گزینه ها </th>
+					<th> نام و نام خانوادگی </th>
+					<th> وضعیت </th>
+					<th> تاریخ تحویل </th>
+					<th> تاریخ دریافت </th>
+					<th> مدت زمان </th>
 				</tr>
 				</thead>
 				<tbody>
 				<?php
-				$sub='';
-				if(!empty($sub)):
+				if(!empty($history)):
 					$num=1;
-					foreach($sub as $item):
+					foreach($history as $item):
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
-							<td><?php echo $item->count ?></td>
-							<td>0</td>
+							<td><?php echo $item->name ?></td>
 							<td>
-								<?php
-								if(empty($item->description)):
-									?>
-									<span class="label label-danger"> ثبت نشده </span>
-								<?php
-								else: echo $item->description; endif;
-								?>
-							</td>
-							<td><?php echo $item->size ?></td>
-							<td><?php echo $item->company ?></td>
-							<td>
-								<div class="more">
-									<div class="item">
-										<i class="fal fa-ellipsis-h"></i>
-									</div>
-									<div class="menu">
-										<a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
-										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
-									</div>
-								</div>
-							</td>
+                                <?php
+                                if($item->status=='1'):
+                                ?>
+                                <span class="label label-success"> تحویل گرفته شده </span>
+                                <?php
+                                else:
+                                ?>
+                                <span class="label label-warning"> تحویل گرفته نشده </span>
+                                <?php
+                                endif;
+                                ?>
+                            </td>
+                            <td><?php echo $calendar->date("j F Y ساعت H:i",$item->createdAt) ?></td>
+                            <td><?php echo $item->status=='0' ? '#' : $calendar->date("j F Y ساعت H:i",$item->updatedAt) ?></td>
+                            <td><?php echo $item->status=='0' ? '#' : humanTiming($item->updatedAt-$item->createdAt,false) ?></td>
 						</tr>
 					<?php
 					endforeach;
 				else:
 					?>
 					<tr>
-						<td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+						<td colspan="5" class="no-data"> موردی برای نمایش وجود ندارد! </td>
 					</tr>
 				<?php
 				endif;

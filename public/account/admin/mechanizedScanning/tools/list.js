@@ -52,7 +52,7 @@ $(document).ready(function()
                 if(Array.isArray(data))
                 {
                     var sub=data[1];
-                    $('#sub .option').html('').show()
+                    $('#sub .option').html('').closest('#sub').show()
                     $.each(sub,function(i,a)
                     {
                         $('#sub .option').append(
@@ -71,12 +71,10 @@ $(document).ready(function()
     $(document).on('submit','#scan form',function(e)
     {
         e.preventDefault();
-        ajaxHandler($(this),false).done(function(data)
+        ajaxHandler($(this)).done(function(data)
         {
-            ajaxT.html(data)
-            return false;
             data=$.parseJSON(data)
-            validationMessage(false,data.msg,data.type,data.err,'#add .validation-message')
+            validationMessage(false,data.msg,data.type,data.err,'#scan .validation-message')
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })

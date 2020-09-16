@@ -49,9 +49,9 @@
                                 ?>
                             </td>
                             <?php
-                            if(empty($item->subCount)):
+                            if(!empty($item->subCount)):
                             ?>
-                                <td colspan="2"><span class="label label-warning"><?php echo $item->count ?> ابزار زیر مجموعه </span></td>
+                                <td colspan="2"><span class="label label-warning"><?php echo $item->subCount ?> ابزار زیر مجموعه </span></td>
                             <?php
                             else:
                             ?>
@@ -70,7 +70,15 @@
 								?>
                             </td>
                             <td><span class="label label-primary"><?php echo strtr($item->type,ToolsType) ?></span></td>
-                            <td><?php echo $item->size ?></td>
+                            <td>
+								<?php
+								if(empty($item->size)):
+									?>
+                                    <span class="label label-danger"> ثبت نشده </span>
+								<?php
+								else: echo $item->size; endif;
+								?>
+                            </td>
                             <td><?php echo $item->company ?></td>
                             <td>
                                 <div class="more">
@@ -120,7 +128,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="input-mask required" mask-type mask-label="سایز">
+				<div class="input-mask" mask-type mask-label="سایز">
 					<input type="text" name="data[size]" placeholder="سایز را اینجا وارد کنید" autocomplete="off">
 				</div>
 			</div>
@@ -172,7 +180,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="input-mask required" mask-type mask-label="سایز">
+				<div class="input-mask" mask-type mask-label="سایز">
 					<input type="text" name="data[size]" placeholder="سایز را اینجا وارد کنید" autocomplete="off">
 				</div>
 			</div>
@@ -229,7 +237,13 @@
             <div class="col-12">
                 <div class="input-mask required" mask-type="select:search" mask-label="انتخاب کارآموز">
                     <select name="data[studentId]">
-                        <option value="0" toolbar="test"> نیما اسعدی </option>
+                        <?php
+                        foreach($students as $item):
+                        ?>
+                            <option value="<?php echo $item->id ?>"><?php echo $item->name ?></option>
+                        <?php
+                        endforeach;
+                        ?>
                     </select>
                 </div>
             </div>
@@ -245,8 +259,8 @@
             </div>
             <div class="col-lg-6">
                 <div class="input-mask required" mask-type="radio" mask-label="وضعیت">
-                    <input type="radio" value="0" label="تحویل دادن" name="data[type]" checked>
-                    <input type="radio" value="1" label="تحویل گرفتن" name="data[type]">
+                    <input type="radio" value="0" label="تحویل دادن" name="data[status]" checked>
+                    <input type="radio" value="1" label="تحویل گرفتن" name="data[status]">
                 </div>
             </div>
         </div>

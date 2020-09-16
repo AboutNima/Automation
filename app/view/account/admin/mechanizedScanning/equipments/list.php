@@ -43,16 +43,16 @@
 							<td><?php echo $item->propertyNumber; ?></td>
 							<td>
                                 <?php
-                                    if(empty($item->company)):
+                                if(empty($item->company)):
                                 ?>
                                 <span class="label label-warning"> ثبت نشده </span>
                                 <?php
-                                    else: echo $item->company; endif;
+                                else: echo $item->company; endif;
                                 ?>
                             </td>
 							<td>
                                 <?php
-								if($item->accessories==1):
+								if($item->accessories=='1'):
 								?>
                                     <span class="label label-success"> دارد </span>
                                 <?php else: ?><span class="label label-danger"> ندارد </span><?php endif; ?>
@@ -60,13 +60,17 @@
 							<td><?php echo $item->count ?></td>
 							<td>
                                 <?php
-                                    if($item->status==1):
+                                if($item->status=='1'):
+                                ?>
+                                <span class="label label-success"> تعمیر شده </span>
+                                <?php
+                                elseif($item->status=='2'):
+                                ?>
+                                    <span class="label label-danger"> خراب </span>
+								<?php
+                                else:
                                 ?>
                                 <span class="label label-success"> سالم </span>
-                                <?php
-                                    else:
-                                ?>
-                                <span class="label label-danger"> خراب </span>
                                 <?php endif; ?>
                             </td>
 							<td>
@@ -85,7 +89,6 @@
 									</div>
 									<div class="menu">
 										<a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode; if(!empty($item->propertyNumber)) echo '.'.sprintf('%04d', $item->propertyNumber) ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
-										<a href="/account/mechanizedScanning/equipments/<?php echo $item->id ?>/information"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
 										<a href="/account/mechanizedScanning/equipments/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه تجهیزات </span></a>
 										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
 									</div>
@@ -129,8 +132,9 @@
             </div>
             <div class="col-sm-6">
                 <div class="input-mask" mask-type="radio" mask-label="وضعیت">
-                    <input type="radio" name="data[status]" value="1" label="سالم" checked>
-                    <input type="radio" name="data[status]" value="0" label="خراب">
+                    <input type="radio" name="data[status]" value="0" label="سالم" checked>
+                    <input type="radio" name="data[status]" value="1" label="تعمیر شده">
+                    <input type="radio" name="data[status]" value="2" label="خراب">
                 </div>
             </div>
             <div class="col-12">
@@ -179,8 +183,9 @@
             </div>
             <div class="col-sm-6">
                 <div class="input-mask" mask-type="radio" mask-label="وضعیت">
-                    <input type="radio" name="data[status]" value="1" label="سالم" checked>
-                    <input type="radio" name="data[status]" value="0" label="خراب">
+                    <input type="radio" name="data[status]" value="0" label="سالم">
+                    <input type="radio" name="data[status]" value="1" label="تعمیر شده">
+                    <input type="radio" name="data[status]" value="2" label="خراب">
                 </div>
             </div>
             <div class="col-12">

@@ -122,9 +122,10 @@
 				<ul>
 					<li><a href="/account"><i class="fad fa-cubes"></i><p> داشبورد </p></a></li>
                     <li class="title"> آموزشگاه </li>
+                    <li><a href="/account/students/list"><i class="fa fa-users"></i><p>کارآموزان</p></a></li>
                     <li>
-						<span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
-							<div class="dropdown">
+                    <span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
+                    <div class="dropdown">
 								<ul>
 									<li><a href="/account/mechanizedScanning/tools/list"><i class="fas fa-circle"></i><p>  ابزار  </p></a></li>
 									<li><a href="/account/mechanizedScanning/equipments/list"><i class="fas fa-circle"></i><p>  تجهیزات و امکانات  </p></a></li>
@@ -132,7 +133,7 @@
 							</div>
 						</span>
                     </li>
-				</ul>
+                </ul>
 			</div>
 		</div>
 	</div>

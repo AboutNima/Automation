@@ -44,6 +44,7 @@ foreach($urlPath as $item)
 		case 'history': $urlCrt[]='تاریخچه';break;
 		case 'information': $urlCrt[]='مشخصات ثبت شده';break;
 		case 'mechanizedScanning': $urlCrt[]='سیستم اسکن مکانیزه (QRCode)';break;
+		case 'students': $urlCrt[]='کارآموزان';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -137,6 +138,28 @@ switch($urlPath[0])
 								}
 							}
 							else require_once 'app/controller/account/admin/mechanizedScanning/equipments/list.php';
+							break;
+					}
+					break;
+				case 'students':
+					switch($urlPath[2]){
+						case 'list':
+							if(!empty($id=(int)$urlPath[3]))
+							{
+								switch($urlPath[4])
+								{
+									case 'information':
+										require_once 'app/controller/account/admin/students/information.php';
+										break;
+									case 'history':
+										require_once 'app/controller/account/admin/students/history.php';
+										break;
+									default:
+										header('location:/404');
+										break;
+								}
+							}
+							else require_once 'app/controller/account/admin/students/list.php';
 							break;
 					}
 					break;

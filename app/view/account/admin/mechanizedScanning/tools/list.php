@@ -86,7 +86,7 @@
                                         <i class="fal fa-ellipsis-h"></i>
                                     </div>
                                     <div class="menu">
-                                        <a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode; if(!empty($item->propertyNumber)) echo '.'.sprintf('%04d', $item->propertyNumber) ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
+                                        <a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
                                         <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/information"><span><i class="far fa-file-alt"></i> دیگر مشخصات </span></a>
                                         <a href="/account/mechanizedScanning/tools/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه ابزار </span></a>
                                         <a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
@@ -253,8 +253,8 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="input-mask required" mask-type mask-label="تعداد درخواست">
-                    <input type="text" placeholder="تعداد را وارد کنید" name="data[count]">
+                <div class="input-mask required" mask-type mask-label="تعداد">
+                    <input type="number" autocomplete="off" placeholder="تعداد را وارد کنید" name="data[count]">
                 </div>
             </div>
             <div class="col-lg-6">

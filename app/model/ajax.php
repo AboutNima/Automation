@@ -230,7 +230,7 @@ switch($urlPath[1])
 										case 'getScannedData':
 											if(isset($_POST['code']))
 											{
-												$code=explode('.',$_POST['code'])[0];
+												$code=$_POST['code'];
 												$data=$db->where('QRCode',$code)->objectBuilder()->getOne('MST',[
 													'id','type','count'
 												]);
@@ -249,7 +249,7 @@ switch($urlPath[1])
 														'COUNT'=>$data->count
 													];
 													$sub=$db->where('subId',$data->id)->get('MST',null,[
-														'id','size'
+														'id','size',"MST.count-(SELECT COUNT(id) FROM MSTHistory WHERE subToolId=MST.id AND status='0') as count"
 													]);
 													if(!empty($sub))
 													{
@@ -273,7 +273,7 @@ switch($urlPath[1])
 														'required[انتخاب کارآموز]',
 														'in[انتخاب,کارآموز]:0,1,2'
 													],
-													'count'=>['required[موجودی]','numeric[موجودی]'],
+													'count'=>['required[تعداد]','numeric[تعداد]','min[تعداد,1]:1'],
 													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
 												];
 												if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']))
@@ -346,7 +346,7 @@ switch($urlPath[1])
 														die(json_encode([
 															'type'=>'warning',
 															'msg'=>'موردی جهت بازگشت به انبار یافت نشد',
-															'err'=>0,
+															'err'=>1,
 															'data'=>null
 														]));
 													}
@@ -465,6 +465,111 @@ switch($urlPath[1])
 															'type'=>'warning',
 															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
 															'err'=>-2,
+															'data'=>null
+														]));
+													}
+												}
+											}
+											break;
+										case 'getScannedData':
+											if(isset($_POST['code']))
+											{
+												$code=$_POST['code'];
+												$data=$db->where('QRCode',$code)->objectBuilder()->getOne('MSE',[
+													'id','title','count'
+												]);
+												if(empty($data))
+												{
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>'موردی پیدا نشد',
+														'err'=>0,
+														'data'=>null
+													]));
+												}else{
+													$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']=[
+														'ID'=>$data->id,
+														'COUNT'=>$data->count
+													];
+													die(json_encode([
+														'err'=>null,
+														'data'=>json_encode($data)
+													]));
+												}
+											}
+											break;
+										case 'record':
+											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'studentId'=>[
+														'required[انتخاب کارآموز]',
+														'in[انتخاب,کارآموز]:0,1,2'
+													],
+													'count'=>['required[تعداد]','numeric[تعداد]','min[تعداد,1]:1'],
+													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												if($data['status']=='0')
+												{
+													$check=$db->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID'])->
+													where('status','0')->getValue('MSEHistory','COUNT(id)');
+													if($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['COUNT']-$check>=$data['count'])
+													{
+														for($i=0;$i<$data['count'];$i++) $id=$db->insert('MSEHistory',[
+															'studentId'=>$data['studentId'],
+															'status'=>$data['status'],
+															'toolId'=>$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID']
+														]);
+														if((bool)$id)
+														{
+															die(json_encode([
+																'type'=>'success',
+																'msg'=>'درخواست شما با موفقیت انجام شد',
+																'err'=>null,
+																'data'=>null
+															]));
+														}else{
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																'err'=>-2,
+																'data'=>null
+															]));
+														}
+													}else{
+														die(json_encode([
+															'type'=>'danger',
+															'msg'=>'موجودی انبار کمتر از میزان درخواست شما میباشد',
+															'err'=>0,
+															'data'=>null
+														]));
+													}
+												}else{
+													$check=$db->where('studentId',$data['studentId'])->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID'])->
+													where('status','0')->update('MSEHistory',['status'=>'1'],$data['count']);
+													if($db->count>0)
+													{
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'تعداد '.$db->count.' ابزار تحویل گرفته شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'موردی جهت بازگشت به انبار یافت نشد',
+															'err'=>1,
 															'data'=>null
 														]));
 													}

@@ -48,7 +48,7 @@
 										<i class="fal fa-ellipsis-h"></i>
 									</div>
 									<div class="menu">
-										<a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode; if(!empty($item->propertyNumber)) echo '.'.sprintf('%04d', $item->propertyNumber) ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
+										<a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
 										<a href="/account/students/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه کارآموز </span></a>
 										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
 									</div>
@@ -81,7 +81,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+				<div class="input-mask" mask-type mask-label="شرکت سازنده">
 					<input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
 				</div>
 			</div>
@@ -131,7 +131,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+				<div class="input-mask" mask-type mask-label="شرکت سازنده">
 					<input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
 				</div>
 			</div>

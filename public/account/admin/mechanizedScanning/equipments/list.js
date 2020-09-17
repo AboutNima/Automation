@@ -37,4 +37,35 @@ $(document).ready(function()
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })
+    $('#startScan').qrCodeReader({
+        callback: function(code)
+        {
+            sendQRCode(code)
+        }
+    })
+    function sendQRCode(code)
+    {
+        $.post('/ajax/account/admin/mechanizedScanning/equipments/getScannedData',{code:code},function(data)
+        {
+            data=$.parseJSON(data)
+            if(data.data===null) validationMessage(2000,data.msg,data.type,data.err,'#scan .validation-message')
+            else{
+                data=$.parseJSON(data.data)
+                $('#scan form').show(0)
+                $('#scan form h6').html(data.title)
+            }
+        })
+    }
+    $(document).on('submit','#scan form',function(e)
+    {
+        e.preventDefault();
+        ajaxHandler($(this),false).done(function(data)
+        {
+            ajaxT.html(data)
+            return false;
+            data=$.parseJSON(data)
+            validationMessage(false,data.msg,data.type,data.err,'#scan .validation-message')
+            if(data.err==null) setTimeout(function(){location.reload()},1500)
+        })
+    })
 })

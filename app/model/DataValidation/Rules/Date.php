@@ -15,7 +15,10 @@ class Date extends AbstractValidationRule{
 
 	public static function validationRule($value,$param)
 	{
-		$value=explode('/',$value);
-		if($value!='') return (bool) checkdate($value[1],$value[2],$value[0]);
+		if($value!='')
+		{
+			$value=explode('/',$value);
+			return (bool) checkdate($value[1],$value[2],$value[0]);
+		}
 	}
 }

@@ -145,7 +145,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6">
-				<div class="input-mask" mask-type mask-label="تعداد">
+				<div class="input-mask required" mask-type mask-label="تعداد">
 					<input type="number" name="data[count]" placeholder="تعداد را اینجا وارد کنید" autocomplete="off">
 				</div>
 			</div>

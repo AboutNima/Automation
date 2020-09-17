@@ -56,7 +56,7 @@ $(document).ready(function()
                     $.each(sub,function(i,a)
                     {
                         $('#sub .option').append(
-                            "<span value='"+a.id+"'>"+a.size+"</span>"
+                            "<span value='"+a.id+"'><p class='toolbar'>"+a.count+" عدد </p>"+a.size+"</span>"
                         )
                     })
                     data=data[0];

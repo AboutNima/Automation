@@ -23,11 +23,12 @@
 					<th> ردیف </th>
 					<th> نام </th>
 					<th> شماره اموال </th>
-					<th> شرکت سازنده (نام تجاری) </th>
-					<th> لوازم جانبی </th>
-					<th> تعداد </th>
+                    <th> موجودی کل </th>
+                    <th> موجودی فعلی </th>
+                    <th> توضیحات </th>
+                    <th> شرکت سازنده </th>
+                    <th> لوازم جانبی </th>
 					<th> وضعیت </th>
-					<th> توضیحات </th>
 					<th> گزینه ها </th>
 				</tr>
 				</thead>
@@ -36,44 +37,14 @@
 				if(!empty($data)):
 					$num=1;
 					foreach($data as $item):
-						?>
+                    ?>
 						<tr>
 							<td><?php echo $num++ ?></td>
 							<td><?php echo $item->title; ?></td>
 							<td><?php echo sprintf('%04d',$item->propertyNumber); ?></td>
-							<td>
-                                <?php
-                                if(empty($item->company)):
-                                ?>
-                                <span class="label label-warning"> ثبت نشده </span>
-                                <?php
-                                else: echo $item->company; endif;
-                                ?>
-                            </td>
-							<td>
-                                <?php
-								if($item->accessories=='1'):
-								?>
-                                    <span class="label label-success"> دارد </span>
-                                <?php else: ?><span class="label label-danger"> ندارد </span><?php endif; ?>
-							</td>
 							<td><?php echo $item->count ?></td>
-							<td>
-                                <?php
-                                if($item->status=='1'):
-                                ?>
-                                <span class="label label-success"> تعمیر شده </span>
-                                <?php
-                                elseif($item->status=='2'):
-                                ?>
-                                    <span class="label label-danger"> خراب </span>
-								<?php
-                                else:
-                                ?>
-                                <span class="label label-success"> سالم </span>
-                                <?php endif; ?>
-                            </td>
-							<td>
+                            <td><?php echo $item->count-$item->inUse ?></td>
+                            <td>
                                 <?php
 								if(empty($item->description)):
 									?>
@@ -82,13 +53,44 @@
 								else: echo $item->description; endif;
 								?>
                             </td>
-							<td>
+                            <td>
+								<?php
+								if(empty($item->company)):
+									?>
+                                    <span class="label label-warning"> ثبت نشده </span>
+								<?php
+								else: echo $item->company; endif;
+								?>
+                            </td>
+                            <td>
+								<?php
+								if($item->accessories=='1'):
+									?>
+                                    <span class="label label-success"> دارد </span>
+								<?php else: ?><span class="label label-danger"> ندارد </span><?php endif; ?>
+                            </td>
+                            <td>
+								<?php
+								if($item->status=='1'):
+									?>
+                                    <span class="label label-success"> تعمیر شده </span>
+								<?php
+                                elseif($item->status=='2'):
+									?>
+                                    <span class="label label-danger"> خراب </span>
+								<?php
+								else:
+									?>
+                                    <span class="label label-success"> سالم </span>
+								<?php endif; ?>
+                            </td>
+                            <td>
 								<div class="more">
 									<div class="item">
 										<i class="fal fa-ellipsis-h"></i>
 									</div>
 									<div class="menu">
-										<a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode; if(!empty($item->propertyNumber)) echo '.'.sprintf('%04d', $item->propertyNumber) ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
+										<a target="_blank" href="https://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=<?php echo $item->QRCode ?>&chld=H|1"><span><i class="far fa-qrcode"></i> تولید کد QR </span></a>
 										<a href="/account/mechanizedScanning/equipments/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه تجهیزات </span></a>
 										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
 									</div>
@@ -121,7 +123,7 @@
 				</div>
 			</div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+                <div class="input-mask" mask-type mask-label="شرکت سازنده">
                     <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
@@ -172,7 +174,7 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="شرکت سازنده (نام تجاری)">
+                <div class="input-mask" mask-type mask-label="شرکت سازنده">
                     <input type="text" name="data[company]" placeholder="شرکت سازنده را اینجا وارد کنید" autocomplete="off">
                 </div>
             </div>
@@ -212,7 +214,55 @@
 		</div>
 	</form>
 </div>
-<div class="popup" popup-size="md" popup-title="اسکن تجهیزات" id="scan">
-	<div class="validation-message no-margin top"></div>
-	.Scan
+<div class="popup" popup-size="sm" popup-title="اسکن ابزار" id="scan">
+    <div class="validation-message no-margin top"></div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="input-mask no-mask-margin" mask-type>
+                <input type="text" placeholder="کد QR را اسکن کنید">
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-mask no-mask-margin">
+                <button class="btn btn-warning d-block" style="width: 100%;" id="startScan"> اسکن با دوربین </button>
+            </div>
+        </div>
+    </div>
+    <p class="text-danger fsize-13 mt-0 fism"> * توجه داشته باشید در صورت استفاده از بارکد اسکنر حتما فیلد بالا در حالت انتخاب باشد </p>
+    <form action="/ajax/account/admin/mechanizedScanning/equipments/record" style="display: none" class="ajax-handler" method="post">
+        <input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
+        <div class="hr"></div>
+        <h6></h6>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <div class="input-mask required" mask-type="select:search" mask-label="انتخاب کارآموز">
+                    <select name="data[studentId]">
+						<?php
+						foreach($students as $item):
+                        ?>
+                            <option value="<?php echo $item->id ?>"><?php echo $item->name ?></option>
+						<?php
+						endforeach;
+						?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-mask required" mask-type mask-label="تعداد">
+                    <input type="number" autocomplete="off" placeholder="تعداد را وارد کنید" name="data[count]">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-mask required" mask-type="radio" mask-label="وضعیت">
+                    <input type="radio" value="0" label="تحویل دادن" name="data[status]" checked>
+                    <input type="radio" value="1" label="تحویل گرفتن" name="data[status]">
+                </div>
+            </div>
+        </div>
+        <div class="hr"></div>
+        <div class="input-mask no-mask-margin">
+            <button class="btn btn-purple"> ذخیره </button>
+        </div>
+    </form>
 </div>

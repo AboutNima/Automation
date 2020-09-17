@@ -633,6 +633,16 @@ switch($urlPath[1])
 											}
 									}
 									break;
+								case 'getData':
+									if(isset($_POST['id']))
+									{
+										$_SESSION['DATA']['Students']['ID']=$_POST['id'];
+										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Students',[
+											'name','surname','name(en)','surname(en)','fatherName','nationalCode',
+											'birthCNumber','phoneNumber','homeNumber','birthDay','education','address','job'
+										]);
+									}
+									break;
 								case 'edit':
 									break;
 							}

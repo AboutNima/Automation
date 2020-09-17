@@ -166,8 +166,28 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="نام خانوادگی">
+                <div class="input-mask required" mask-type mask-label="نام خانوادگی">
                     <input type="text" name="data[surname]" placeholder="نام خانوادگی کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="نام (انگلیسی)">
+                    <input type="text" name="data[name(en)]" placeholder="نام انگلیسی کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="نام خانوادگی (انگلیسی)">
+                    <input type="text" name="data[surname(en)]" placeholder="نام خانوادگی انگلیسی کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="نام پدر">
+                    <input type="text" name="data[fatherName]" placeholder="نام پدر کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="تاریخ تولد">
+                    <input type="date" name="data[birthDay]" placeholder="تاریخ تولد کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-6">
@@ -176,13 +196,40 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="شماره تلفن">
-                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره شناسنامه">
+                    <input type="text" name="data[birthCNumber]" placeholder="شماره شناسنامه کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="input-mask" mask-type mask-label="تاریخ تولد">
-                    <input type="number" name="data[birthDay]" placeholder="تاریخ تولد کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره تلفن همراه">
+                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن همراه کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
+                    <input type="text" name="data[homeNumber]" placeholder="شماره تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required education" mask-type="select:search" mask-label="میزان تحصیلات">
+                    <select name="data[education]">
+                        <option value="راهنمایی">راهنمایی</option>
+                        <option value="دیپلم">دیپلم</option>
+                        <option value="فوق دیپلم">فوق دیپلم</option>
+                        <option value="لیسانس">لیسانس</option>
+                        <option value="فوق لیسانس">فوق لیسانس</option>
+                        <option value="دکترا">دکترا</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask" mask-type mask-label="شغل">
+                    <input type="text" name="data[job]" placeholder="شغل کارآموز را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-mask required" mask-type mask-label="آدرس">
+                    <input type="text" name="data[address]" placeholder="آدرس کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
 		<div class="clearFix">

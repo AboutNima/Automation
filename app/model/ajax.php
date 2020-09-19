@@ -580,6 +580,120 @@ switch($urlPath[1])
 									break;
 							}
 							break;
+						case 'students':
+							switch($urlPath[4]){
+								case 'add':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+											'name(en)'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
+											'surname(en)'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
+											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
+											'nationalCode'=>['required[کد ملی]','NationalCode'],
+											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
+											'phoneNumber'=>['required[شماره تلفن همراه]','PhoneNumber'],
+											'homeNumber'=>'HomeNumber',
+											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
+											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:راهنمایی,دیپلم,فوق دیپلم,لیسانس,فوق لیسانس,دکترا'],
+											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
+											'job'=>'length[شقل,حداکثر,75]:max,75'
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(empty($data['homeNumber'])) $data['homeNumber']=null;
+										if(empty($data['job'])) $data['job']=null;
+										$data['QRCode']=randomText(25);
+										$id=$db->insert('Students',$data);
+										if((bool)$id)
+										{
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'کارآموز جدید با موفقیت ثبت شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
+									}
+									break;
+								case 'getData':
+									if(isset($_POST['id']))
+									{
+										$_SESSION['DATA']['Students']['ID']=$_POST['id'];
+										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Students',[
+											'name','surname','name(en)','surname(en)','fatherName','nationalCode',
+											'birthCNumber','phoneNumber','homeNumber','birthDay','education','address','job'
+										]);
+									}
+									break;
+								case 'edit':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['Students']['ID']))
+									{
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+											'name(en)'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
+											'surname(en)'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
+											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
+											'nationalCode'=>['required[کد ملی]','NationalCode'],
+											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
+											'phoneNumber'=>['required[شماره تلفن همراه]','PhoneNumber'],
+											'homeNumber'=>'HomeNumber',
+											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
+											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:راهنمایی,دیپلم,فوق دیپلم,لیسانس,فوق لیسانس,دکترا'],
+											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
+											'job'=>'length[شقل,حداکثر,75]:max,75'
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$check=$db->where('id',$_SESSION['DATA']['Students']['ID'])->
+										update('Students',$data,1);
+										if($check)
+										{
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'کارآموز با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
+									}
+									break;
+							}
+							break;
 					}
 				}else{
 					if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();

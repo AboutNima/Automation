@@ -1,7 +1,7 @@
 <?php
 $data=$db->orderBy('id','DESC')->
 objectBuilder()->get('Students',null,[
-	'id','QRCode',"CONCAT(name,' ',surname) as name",'nationalCode','phoneNumber','UNIX_TIMESTAMP(Students.birthyDay) as birthDay',
+	'id','QRCode',"CONCAT(name,' ',surname) as name",'nationalCode','phoneNumber','UNIX_TIMESTAMP(Students.birthDay) as birthDay',
 	'UNIX_TIMESTAMP(Students.createdAt) as createdAt'
 ]);
 $script=[

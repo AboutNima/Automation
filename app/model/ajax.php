@@ -362,7 +362,7 @@ switch($urlPath[1])
 											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 											if(isset($_POST['data'])){
 												$data=$_POST['data'];
-												if(!isset($data['accessories'])) $data['accessories']=0;
+												$data['accessories']=isset($data['accessories']) ? '1' : '0';
 												$validation=new Validation($data,[
 													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
@@ -422,7 +422,7 @@ switch($urlPath[1])
 											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']))
 											{
 												$data=$_POST['data'];
-												if(!isset($data['accessories'])) $data['accessories']=0;
+												$data['accessories']=isset($data['accessories']) ? '1' : '0';
 												$validation=new Validation($data,[
 													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],

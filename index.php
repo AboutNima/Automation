@@ -142,26 +142,22 @@ switch($urlPath[0])
 					}
 					break;
 				case 'students':
-					switch($urlPath[2]){
-						case 'list':
-							if(!empty($id=(int)$urlPath[3]))
-							{
-								switch($urlPath[4])
-								{
-									case 'information':
-										require_once 'app/controller/account/admin/students/information.php';
-										break;
-									case 'history':
-										require_once 'app/controller/account/admin/students/history.php';
-										break;
-									default:
-										header('location:/404');
-										break;
-								}
-							}
-							else require_once 'app/controller/account/admin/students/list.php';
-							break;
+					if(!empty($id=(int)$urlPath[2]))
+					{
+						switch($urlPath[3])
+						{
+							case 'information':
+								require_once 'app/controller/account/admin/students/information.php';
+								break;
+							case 'history':
+								require_once 'app/controller/account/admin/students/history.php';
+								break;
+							default:
+								header('location:/404');
+								break;
+						}
 					}
+					else require_once 'app/controller/account/admin/students/list.php';
 					break;
 			}
 

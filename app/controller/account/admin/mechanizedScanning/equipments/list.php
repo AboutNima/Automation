@@ -13,6 +13,6 @@ $script=[
 	'/public/account/admin/mechanizedScanning/equipments/list'
 ];
 $link='/public/construct/QRCodeReader/qrcode-reader.min';
-require_once 'app/controller/motherPage/header.php';
+require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/mechanizedScanning/equipments/list.php';
-require_once 'app/controller/motherPage/footer.php';
+require_once 'app/controller/motherPage/adminFooter.php';

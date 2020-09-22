@@ -1,14 +1,9 @@
 <?php
 $data=$db->orderBy('id','DESC')->
 objectBuilder()->get('Students',null,[
-	'id','QRCode',"CONCAT(name,' ',surname) as name",'nationalCode','phoneNumber','UNIX_TIMESTAMP(Students.birthDay) as birthDay',
-	'UNIX_TIMESTAMP(Students.createdAt) as createdAt'
+	'id',"CONCAT(name,' ',surname) as name",'nationalCode','phoneNumber','UNIX_TIMESTAMP(birthDay) as birthDay',
 ]);
-$script=[
-	'/public/construct/QRCodeReader/qrcode-reader.min',
-	'/public/account/admin/students/list'
-];
-$link='/public/construct/QRCodeReader/qrcode-reader.min';
-require_once 'app/controller/motherPage/header.php';
+$script='/public/account/admin/students/list';
+require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/students/list.php';
-require_once 'app/controller/motherPage/footer.php';
+require_once 'app/controller/motherPage/adminFooter.php';

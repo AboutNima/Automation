@@ -20,9 +20,9 @@
 				</thead>
 				<tbody>
 				<?php
-				if(!empty($history)):
+				if(!empty($equipmentsHistory)):
 					$num=1;
-					foreach($history as $item):
+					foreach($equipmentsHistory as $item):
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
@@ -49,7 +49,7 @@
 				else:
 					?>
 					<tr>
-						<td colspan="5" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+						<td colspan="6" class="no-data"> موردی برای نمایش وجود ندارد! </td>
 					</tr>
 				<?php
 				endif;
@@ -81,9 +81,9 @@
                 </thead>
                 <tbody>
 				<?php
-				if(!empty($history)):
+				if(!empty($toolsHistory)):
 					$num=1;
-					foreach($history as $item):
+					foreach($toolsHistory as $item):
 						?>
                         <tr>
                             <td><?php echo $num++ ?></td>
@@ -110,7 +110,7 @@
 				else:
 					?>
                     <tr>
-                        <td colspan="5" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+                        <td colspan="6" class="no-data"> موردی برای نمایش وجود ندارد! </td>
                     </tr>
 				<?php
 				endif;

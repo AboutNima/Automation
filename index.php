@@ -66,6 +66,11 @@ if($urlPath[0]=='logout')
 }
 switch($urlPath[0])
 {
+	// Site
+	case '':
+		require_once 'public/soon/index.html';
+		break;
+
 	// Ajax
 	case 'ajax':
 		require_once 'app/model/ajax.php';

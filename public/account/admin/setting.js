@@ -6,7 +6,7 @@ $(document).ready(function()
         ajaxHandler($(this)).done(function(data)
         {
             data=$.parseJSON(data)
-            validationMessage(data.msg,data.type,data.err)
+            validationMessage(false,data.msg,data.type,data.err)
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })

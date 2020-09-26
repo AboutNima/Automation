@@ -29,7 +29,7 @@
 	<div class="body">
 		<div class="profile">
 			<div>
-				<img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/account/panel/media/user.png' : $_SESSION['Admin']['avatar'] ?>" alt="">
+				<img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/construct/media/user.png' : $_SESSION['Admin']['avatar'] ?>" alt="">
 			</div>
 			<div>
 				<span>#</span>
@@ -39,7 +39,7 @@
 		<div class="panel">
 			<ul>
                 <li class="away balloon" data-id="0" balloon-position="right" balloon-text="نیما اسعدی" balloon-timeout="0">
-                    <img src="/public/account/panel/media/user.png" alt="">
+                    <img src="/public/construct/media/user.png" alt="">
                 </li>
 			</ul>
 		</div>
@@ -71,7 +71,7 @@
 				<li><a href="#time" class="fsize-12" id="showTime"></a></li>
 				<li class="balloon" balloon-position="bottom" balloon-text="اعلان های مدیریت"><i class="fal fa-bell"></i><span class="alert"></span></li>
 				<li class="hv balloon" balloon-position="bottom" balloon-text="تنظیمات" onclick="location.replace('/account/setting')">
-                    <img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/account/panel/media/user.png' : $_SESSION['Admin']['avatar'] ?>" class="picture">
+                    <img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/construct/media/user.png' : $_SESSION['Admin']['avatar'] ?>" class="picture">
 				</li>
 			</ul>
 		</div>
@@ -114,7 +114,7 @@
 						<li><a href="/account/setting"><i class="fal fa-cog"></i></a></li>
 					</ul>
 				</div>
-				<img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/account/panel/media/user.png' : $_SESSION['Admin']['avatar'] ?>">
+				<img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/construct/media/user.png' : $_SESSION['Admin']['avatar'] ?>">
 			</div>
 		</div>
 		<div class="body">

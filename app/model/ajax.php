@@ -694,6 +694,118 @@ switch($urlPath[1])
 									break;
 							}
 							break;
+						case 'setting':
+							switch($urlPath[4])
+							{
+								case 'changePassword':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'new'=>['required[گذرواژه جدید]','length[گذرواژه جدید,حداکثر,50]:max,50','same[گذرواژه جدید,تکرار گذرواژه جدید]:repeat'],
+											'repeat'=>['required[تکرار گذرواژه جدید]','length[تکرار گذرواژه جدید,حداکثر,50]:max,50'],
+											'yet'=>['required[گذرواژه فعلی]','length[گذرواژه فعلی,حداکثر,50]:max,50'],
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$check=(int)$db->where('id',$_SESSION['Admin']['id'])->
+										where('password',cryptPassword($data['yet'],$_SESSION['Admin']['username'],'HBAutomationAdminLogin'))->
+										getOne('Admin','id')['id'];
+										if($check!==0)
+										{
+											$check=$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
+												'password'=>$password=cryptPassword($data['new'],$_SESSION['Admin']['username'],'HBAutomationAdminLogin')
+											]);
+											if($check)
+											{
+												$_SESSION['Admin']['password']=$password;
+												die(json_encode([
+													'type'=>'success',
+													'msg'=>'گذرواژه با موفقیت ویرایش شد',
+													'err'=>null,
+													'data'=>null
+												]));
+											}else{
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
+										}else{
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>'گذرواژه فعلی اشتباه است',
+												'err'=>0,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+								case 'profile':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
+										$data=$_POST['data'];
+										$data['avatar']=isset($_FILES['file']) ? $_FILES['file'] : '';
+										$validation=new Validation($data,[
+											'name'=>['required[نام]','length[نام,حداکثر,75]:max,75'],
+											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,75]:max,75'],
+											'nationalCode'=>['required[کد ملی]','nationalCode'],
+											'phoneNumber'=>['required[شماره همراه]','phoneNumber'],
+											'avatar'=>['upload[jpg.jpeg.png.tiff,512]:png.jpg.jpeg.tiff,512']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(!empty($data['avatar']))
+										{
+											$upload=new \Verot\Upload\Upload($data['avatar']);
+											if($upload->uploaded)
+											{
+												$upload->file_new_name_body=sha1(randomCode(10));
+												$upload->image_resize=true;
+												$upload->image_x=250;
+												$upload->image_y=250;
+												$upload->process('public/account/admin/media/'.$_SESSION['Admin']['id'].'/avatar');
+												if($upload->processed) $data['avatar']=str_replace('\\','/',$upload->file_dst_pathname);
+											}
+										}else unset($data['avatar']);
+										$check=$db->where('id',$_SESSION['Admin']['id'])->update('Admin',$data);
+										if($check)
+										{
+											if(!empty($_SESSION['Admin']['avatar']) && isset($data['avatar'])) unlink($_SESSION['Admin']['avatar']);
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'اطلاعات حساب مدیریت شما با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+							}
+							break;
 					}
 				}else{
 					if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();

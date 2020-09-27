@@ -9,6 +9,158 @@ switch($urlPath[1])
 				{
 					switch($urlPath[3])
 					{
+						case 'stayOnline':
+							$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
+								'onlineFrom'=>time()
+							],1);
+							echo $db->count;
+							break;
+						case 'chatroom':
+							switch($urlPath[4])
+							{
+								case 'getStatus':
+									$data=$db->where('id',['NOT IN'=>[$_SESSION['Admin']['id']]])->
+									orderBy('id','DESC')->objectBuilder()->get('Admin',null,[
+										'id','online',
+										"(SELECT COUNT(id) FROM ChatRoom WHERE receiverId={$_SESSION['Admin']['id']} AND senderId=Admin.id AND seen='0') as unread"
+									]);
+									foreach($data as &$item) $item->online=strtr($item->online,['0'=>'offline','1'=>'online','2'=>'away']);
+									die(json_encode($data));
+									break;
+								case 'getNotification':
+									$data=$db->where('receiverId',$_SESSION['Admin']['id'])->
+									where('notification','0')->
+									join('Admin','Admin.id=senderId')->
+									orderBy('ChatRoom.id','DESC')->
+									objectBuilder()->get('ChatRoom',null,[
+										'Admin.id','avatar','text','file','ChatRoom.id as cId'
+									]);
+									$id=[];
+									foreach($data as &$item)
+									{
+										$id[]=$item->cId;
+										$item->avatar=empty($item->avatar) ? 'public/construct/media/user.png' : $item->avatar;
+										$item->text=preg_replace("#<br />#", " ", $item->text);
+									}
+									if(!empty($id))
+									{
+										$db->where('id',$id,'IN')->update('ChatRoom',[
+											'notification'=>'1'
+										]);
+									}
+									die(json_encode($data));
+									break;
+								case 'loadChat':
+									if(isset($_POST['id']))
+									{
+										$id=$_POST['id'];
+										$data=$db->where('id',$id)->objectBuilder()->getOne('Admin',[
+											'id','online','onlineFrom'
+										]);
+										if(!empty($data))
+										{
+											$_SESSION['DATA']['Chatroom']=[
+												'ID'=>$id,
+												'Token'=>$data->Token=strtoupper(md5(randomText(10).$id))
+											];
+											$data->online=strtr($data->online,['0'=>'offline','1'=>'online','2'=>'away']);
+											if($data->online=='online') $data->onlineFrom='آنلاین';
+											elseif(empty($data->onlineFrom)) $data->onlineFrom='نامشخص';
+											else $data->onlineFrom=humanTiming($data->onlineFrom);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'getChatroomReady':
+									if(isset($_POST['Token']))
+									{
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$db->where("(receiverId={$id} AND senderId={$_SESSION['Admin']['id']})")->
+										orWhere("(receiverId={$_SESSION['Admin']['id']} AND senderId={$id})")->orderBy('id','DESC')->
+										objectBuilder()->get('ChatRoom',75,[
+											'id','senderId','text','seen',
+											"UNIX_TIMESTAMP(createdAt) as createdAt"
+										]);
+										$data=array_reverse($data);
+										if(!empty($data))
+										{
+											$db->where('receiverId',$_SESSION['Admin']['id'])->update('ChatRoom',[
+												'seen'=>'1','notification'=>'1'
+											]);
+											foreach($data as &$item)
+											{
+												$item->sender=$item->senderId==$_SESSION['Admin']['id'] ? true : false;
+												unset($item->senderId);
+												$item->humanTiming=date('h:iA',$item->createdAt);
+											}
+											unset($item);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'sendMessage':
+									if(isset($_POST['text']) && isset($_POST['Token']))
+									{
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										if(empty(trim($_POST['text']))) return false;
+										$text=nl2br($_POST['text']);
+										$id=$db->insert('ChatRoom',[
+											'receiverId'=>$id,
+											'senderId'=>$_SESSION['Admin']['id'],
+											'text'=>$text,
+										]);
+										if(!empty($id))
+										{
+											die(json_encode([
+												'id'=>$id,
+												'text'=>$text,
+												'seen'=>0,
+												'humanTiming'=>date('h:iA',$time=time()),
+												'createdAt'=>$time
+											]));
+										}
+									}
+									break;
+								case 'getNewMessage':
+									if(isset($_POST['Token']))
+									{
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$db->where('senderId',$id)->
+										where('receiverId',$_SESSION['Admin']['id'])->
+										where('seen','0')->
+										orderBy('id','ASC')->
+										objectBuilder()->get('ChatRoom',null,[
+											'id','text',"UNIX_TIMESTAMP(createdAt) as createdAt"
+										]);
+										if(!empty($data))
+										{
+											$db->where('receiverId',$_SESSION['Admin']['id'])->
+											update('ChatRoom',['seen'=>'1']);
+											foreach($data as &$item) $item->humanTiming=date('h:iA',$item->createdAt);
+											unset($item);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'checkSeen':
+									if(isset($_POST['data']) && isset($_POST['Token']))
+									{
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$_POST['data'];
+										$data=$db->where('id',$data,'IN')->
+										where('senderId',$_SESSION['Admin']['id'])->
+										where('receiverId',$id)->
+										where('seen','1')->get('ChatRoom',null,'id');
+										$data=array_column($data,'id');
+										die(json_encode($data));
+									}
+									break;
+							}
+							break;
 						case 'mechanizedScanning':
 							switch($urlPath[4])
 							{
@@ -596,7 +748,7 @@ switch($urlPath[1])
 											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
 											'nationalCode'=>['required[کد ملی]','NationalCode'],
 											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
-											'phoneNumber'=>['required[شماره تلفن همراه]','PhoneNumber'],
+											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
 											'homeNumber'=>'HomeNumber',
 											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
 											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
@@ -656,7 +808,7 @@ switch($urlPath[1])
 											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
 											'nationalCode'=>['required[کد ملی]','NationalCode'],
 											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
-											'phoneNumber'=>['required[شماره تلفن همراه]','PhoneNumber'],
+											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
 											'homeNumber'=>'HomeNumber',
 											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
 											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
@@ -804,6 +956,92 @@ switch($urlPath[1])
 										}
 									}
 									break;
+							}
+							break;
+						default:
+							if($_SESSION['Admin']['id']==1)
+							{
+								switch($urlPath[3])
+								{
+									case 'manageAdmins':
+										switch($urlPath[4])
+										{
+											case 'add':
+												if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+												if(isset($_POST['data']))
+												{
+													$data=$_POST['data'];
+													$validation=new Validation($data,[
+														'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+														'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+														'nationalCode'=>['required[کد ملی]','NationalCode'],
+														'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
+														'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
+													]);
+													if($validation->getStatus()){
+														die(json_encode([
+															'type'=>'danger',
+															'msg'=>$validation->getErrors(),
+															'err'=>-1,
+															'data'=>null
+														]));
+													}
+													$data['password']=cryptPassword($data['username'],$data['username'],'HBAutomationAdminLogin');
+													$id=$db->insert('Admin',$data);
+													if((bool)$id){
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'حساب مدیریت جدید با موفقیت ثبت شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														if($db->getLastErrno()==1062)
+														{
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'این کد ملی قبلا در سیستم ثبت شده',
+																'err'=>0,
+																'data'=>null
+															]));
+														}else{
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																'err'=>-2,
+																'data'=>null
+															]));
+														}
+													}
+												}
+												break;
+											case 'resetPassword':
+												if(isset($_POST['id']))
+												{
+													$data=$db->where('id',$_POST['id'])->getOne('Admin','username')['username'];
+													$check=$db->where('id',$_POST['id'])->update('Admin',[
+														'password'=>cryptPassword($data,$data,'HBAutomationAdminLogin')
+													]);
+													if($check){
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'گذرواژه با موفقیت بازنشانی شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+															'err'=>-2,
+															'data'=>null
+														]));
+													}
+												}
+												break;
+										}
+										break;
+								}
 							}
 							break;
 					}

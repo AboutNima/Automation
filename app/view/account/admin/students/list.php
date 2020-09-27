@@ -22,7 +22,7 @@
 					<th> ردیف </th>
 					<th> نام و نام خانوادگی </th>
 					<th> کد ملی </th>
-					<th> شماره تلفن </th>
+					<th> شماره همراه </th>
 					<th> تاریخ تولد </th>
 					<th> گزینه ها </th>
 				</tr>
@@ -113,13 +113,13 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask required" mask-type mask-label="شماره تلفن همراه">
-                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن همراه کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره همراه">
+                    <input type="text" name="data[phoneNumber]" placeholder="شماره همراه کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
-                    <input type="text" name="data[homeNumber]" placeholder="شماره تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="تلفن ثابت">
+                    <input type="text" name="data[homeNumber]" placeholder="تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
@@ -200,13 +200,13 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask required" mask-type mask-label="شماره تلفن همراه">
-                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن همراه کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره همراه">
+                    <input type="text" name="data[phoneNumber]" placeholder="شماره همراه کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
-                    <input type="text" name="data[homeNumber]" placeholder="شماره تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="تلفن ثابت">
+                    <input type="text" name="data[homeNumber]" placeholder="تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">

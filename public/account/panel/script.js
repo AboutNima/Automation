@@ -69,35 +69,4 @@ $(document).ready(function()
         $('#showTime').html(date.weekDay+' '+date.day+' '+date.month+' ساعت '+today.getHours()+':'+minute_)
     },1000)
 
-    // Start details
-    $(document).on('click','.table-mask table tr td.open-details',function()
-    {
-        var target=$(this).closest('tr').next('tr.details')
-        if(!target.hasClass('active'))
-        {
-            $('.table-mask table tr.details').removeClass('active')
-            target.addClass('active')
-        }else{
-            $('.table-mask table tr.details').removeClass('active')
-        }
-    })
-    $(document).on('click','.table-mask table tr.details td ul li i.open-details',function()
-    {
-        var target=$(this).parent().find('.sub')
-        if(!target.hasClass('active'))
-        {
-            $('.table-mask table tr.details td ul li .sub').removeClass('active')
-            target.addClass('active')
-        }else{
-            $('.table-mask table tr.details td ul li .sub').removeClass('active')
-        }
-    })
-
-    // Start stay online
-    setInterval(function(){
-        $.post('/ajax/account/stayOnline',function(data)
-        {
-            console.log(data)
-        })
-    },1000*60*2.5)
 })

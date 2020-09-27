@@ -45,6 +45,7 @@ foreach($urlPath as $item)
 		case 'information': $urlCrt[]='مشخصات ثبت شده';break;
 		case 'mechanizedScanning': $urlCrt[]='سیستم اسکن مکانیزه (QRCode)';break;
 		case 'students': $urlCrt[]='کارآموزان';break;
+		case 'manageAdmins': $urlCrt[]='مدیریت مدیران';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -96,6 +97,10 @@ switch($urlPath[0])
 				'nationalCode'=>$data->nationalCode,
 				'avatar'=>$data->avatar,
 			];
+			$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
+				'online'=>'1',
+				'onlineFrom'=>time()
+			]);
 
 			switch($urlPath[1])
 			{
@@ -163,6 +168,9 @@ switch($urlPath[0])
 						}
 					}
 					else require_once 'app/controller/account/admin/students/list.php';
+					break;
+				case 'manageAdmins':
+					require_once 'app/controller/account/admin/manageAdmins.php';
 					break;
 			}
 

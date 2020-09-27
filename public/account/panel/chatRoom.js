@@ -191,10 +191,7 @@ $(document).ready(function()
     },500)
 
     // Stay online interval
-    setInterval(function(){$.post('/ajax/account/admin/stayOnline',function(data){
-        alert(data)
-
-    })},1000*60)
+    setInterval(function(){$.post('/ajax/account/admin/stayOnline')},1000*60)
 
     // setInterval(function(){
     //     $.post('/ajax/account/admin/chatroom/getNotification',function(data)

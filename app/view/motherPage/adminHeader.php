@@ -123,6 +123,7 @@
 					<li><a href="/account"><i class="fad fa-cubes"></i><p> داشبورد </p></a></li>
                     <li class="title"> آموزشگاه </li>
                     <li><a href="/account/students/list"><i class="fa fa-users"></i><p>کارآموزان</p></a></li>
+                    <li><a href="/account/consumingMaterials/list"><i class="fa fa-wrench"></i><p>مواد مصرفی</p></a></li>
                     <li>
                     <span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
                     <div class="dropdown">

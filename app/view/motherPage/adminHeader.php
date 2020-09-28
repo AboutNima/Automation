@@ -21,43 +21,51 @@
 </head>
 <body>
 
-<div class="chat-room">
-	<div class="header">
-		<p class="float-right" id="openChatRoom"><i class="fal fa-comment-alt-dots"></i> چت روم </p>
-		<span class="float-left" id="closeChatRoom"><i class="fal fa-times"></i></span>
-	</div>
-	<div class="body">
-		<div class="profile">
-			<div>
-				<img src="/<?php echo empty($_SESSION['Admin']['avatar']) ? 'public/construct/media/user.png' : $_SESSION['Admin']['avatar'] ?>" alt="">
-			</div>
-			<div>
-				<span>#</span>
-				<span>#</span>
-			</div>
-		</div>
-		<div class="panel">
-			<ul>
-                <li class="away balloon" data-id="0" balloon-position="right" balloon-text="نیما اسعدی" balloon-timeout="0">
-                    <img src="/public/construct/media/user.png" alt="">
-                </li>
-			</ul>
-		</div>
-		<div class="chat">
-			<div class="body">
+<div class="chatroom">
+    <div class="header">
+        <p class="float-right" id="openChatroom"><i class="fal fa-comment-alt-dots"></i> چت روم </p>
+        <span class="float-left" id="closeChatroom"><i class="fal fa-times"></i></span>
+    </div>
+    <div class="body">
+        <div class="profile">
+            <div>
+                <img src="">
+            </div>
+            <div>
+                <span class="name">#</span>
+                <span class="status">#</span>
+            </div>
+        </div>
+        <div class="panel">
+            <ul>
+				<?php
+				foreach($adminChat as $item):
+                ?>
+                    <li class="<?php echo strtr($item->online,['0'=>'offline','1'=>'online','2'=>'away']) ?> balloon" data-id="<?php echo $item->id ?>" balloon-position="right" balloon-text="<?php echo $item->name ?>" balloon-timeout="0">
+                        <i class="unread" style="display: <?php if(empty($item->unread)) echo 'none'; ?>"><?php echo $item->unread ?></i>
+                        <img src="/<?php echo empty($item->avatar) ? 'public/construct/media/user.png' : $item->avatar ?>" alt="">
+                    </li>
+				<?php
+				endforeach;
+				?>
+            </ul>
+        </div>
+        <div class="chat">
+            <div class="body">
+                <div class="loader"><i class="far fa-spinner-third fa-spin"></i></div>
                 <span id="unread">0</span>
                 <ul></ul>
             </div>
-			<div class="footer">
-				<p> ارسال سریع با SHIFT+Enter و برای رفتن سر خط Enter </p>
-				<textarea rows="1" placeholder="پیامی ارسال کنید ..." id="chatArea"></textarea>
-				<div>
-					<i class="far fa-paper-plane fa-flip-horizontal" id="sendMessage" style="display: none"></i>
-					<i class="far fa-paperclip" id="sendFile"></i>
-				</div>
-			</div>
-		</div>
-	</div>
+            <div class="footer">
+                <p> ارسال سریع با SHIFT+Enter و برای رفتن سر خط Enter </p>
+                <textarea rows="1" placeholder="پیامی ارسال کنید ..." id="chatArea"></textarea>
+                <div>
+                    <i class="far fa-paper-plane fa-flip-horizontal" id="sendMessage" style="display: none"></i>
+                    <i class="far fa-paperclip" id="sendFile"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="chat-notification">
 	<ul></ul>
@@ -121,17 +129,24 @@
 			<div class="menu">
 				<ul>
 					<li><a href="/account"><i class="fad fa-cubes"></i><p> داشبورد </p></a></li>
+                    <?php
+                    if($_SESSION['Admin']['id']=='1'):
+                    ?>
+                        <li><a href="/account/manageAdmins"><i class="fad fa-users-crown"></i><p> مدیریت مدیران </p></a></li>
+					<?php
+                    endif;
+                    ?>
                     <li class="title"> آموزشگاه </li>
                     <li><a href="/account/students/list"><i class="fa fa-users"></i><p>کارآموزان</p></a></li>
                     <li><a href="/account/consumingMaterials/list"><i class="fa fa-wrench"></i><p>مواد مصرفی</p></a></li>
                     <li>
-                    <span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
-                    <div class="dropdown">
-								<ul>
-									<li><a href="/account/mechanizedScanning/tools/list"><i class="fas fa-circle"></i><p>  ابزار  </p></a></li>
-									<li><a href="/account/mechanizedScanning/equipments/list"><i class="fas fa-circle"></i><p>  تجهیزات و امکانات  </p></a></li>
-								</ul>
-							</div>
+                        <span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
+                            <div class="dropdown">
+                                <ul>
+                                    <li><a href="/account/mechanizedScanning/tools/list"><i class="fas fa-circle"></i><p>  ابزار  </p></a></li>
+                                    <li><a href="/account/mechanizedScanning/equipments/list"><i class="fas fa-circle"></i><p>  تجهیزات و امکانات  </p></a></li>
+                                </ul>
+                            </div>
 						</span>
                     </li>
                 </ul>

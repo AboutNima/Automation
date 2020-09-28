@@ -320,7 +320,7 @@ header{
 }
 
 // Start chat room
-.chat-room{
+.chatroom{
     box-sizing: content-box;
     transition: all ease 0.2s;
     position: fixed;
@@ -531,8 +531,8 @@ header{
             .body{
                 .scrollBar();
                 position: relative;
-                padding: 25px;
-                height: calc(100% - 172px);
+                padding: 10px;
+                height: calc(100% - 135px);
                 overflow: auto;
                 ul{
                     .clearFix();
@@ -551,6 +551,8 @@ header{
                                 line-height: 1.5;
                                 color: #151515;
                                 min-width: 57px;
+                                max-width: 100%;
+                                word-wrap: break-word;
                             }
                             .info{
                                 .disableTextSelect();
@@ -677,6 +679,25 @@ header{
                     cursor: pointer;
                     display: none;
                 }
+                .loader{
+                    display: none;
+                }
+                &:before{
+                    position: absolute;
+                    content: 'جهت شروع گفت و گو یک نفر را انتخاب کنید';
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    background: rgba(255,255,255,0.5);
+                    width: calc(100% - 30px);
+                    color: #252525;
+                    border-radius: 5px;
+                    padding: 15px;
+                    text-align: center;
+                    font-size: 15px;
+                    font-weight: 300;
+                    box-sizing: border-box;
+                }
             }
             .footer{
                 background: #fff;
@@ -736,9 +757,45 @@ header{
                 }
             }
         }
+        &.active{
+            .panel,.chat{
+                top: 60px;
+            }
+            .chat{
+                height: calc(100% - 120px);
+                .body:before{
+                    display: none;
+                }
+            }
+        }
     }
     &.open{
         left: 0;
+    }
+    &.loading{
+        & > .body{
+            .chat{
+                .body{
+                    .loader{
+                        display: block;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        height: 100%;
+                        width: 100%;
+                        background: rgba(0,0,0,0.6);
+                        i{
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%,-50%);
+                            font-size: 35px;
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1211,7 +1268,7 @@ ul.floating{
 
 // Responsive
 @media(max-width: 450px){
-    .chat-room{
+    .chatroom{
         width: 100%;
         right: calc(100% - 60px);
         left: 0;

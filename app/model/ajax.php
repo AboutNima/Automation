@@ -7,8 +7,7 @@ switch($urlPath[1])
 			case 'admin':
 				if(isset($_SESSION['Admin']))
 				{
-					switch($urlPath[3])
-					{
+					switch($urlPath[3]){
 						case 'stayOnline':
 							$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
 								'onlineFrom'=>time()
@@ -16,8 +15,7 @@ switch($urlPath[1])
 							echo $db->count;
 							break;
 						case 'chatroom':
-							switch($urlPath[4])
-							{
+							switch($urlPath[4]){
 								case 'getStatus':
 									$data=$db->where('id',['NOT IN'=>[$_SESSION['Admin']['id']]])->
 									orderBy('id','DESC')->objectBuilder()->get('Admin',null,[
@@ -36,14 +34,12 @@ switch($urlPath[1])
 										'Admin.id','avatar','text','file','ChatRoom.id as cId'
 									]);
 									$id=[];
-									foreach($data as &$item)
-									{
+									foreach($data as &$item){
 										$id[]=$item->cId;
-										$item->avatar=empty($item->avatar) ? 'public/construct/media/user.png' : $item->avatar;
-										$item->text=preg_replace("#<br />#", " ", $item->text);
+										$item->avatar=empty($item->avatar)?'public/construct/media/user.png':$item->avatar;
+										$item->text=preg_replace("#<br />#"," ",$item->text);
 									}
-									if(!empty($id))
-									{
+									if(!empty($id)){
 										$db->where('id',$id,'IN')->update('ChatRoom',[
 											'notification'=>'1'
 										]);
@@ -51,14 +47,12 @@ switch($urlPath[1])
 									die(json_encode($data));
 									break;
 								case 'loadChat':
-									if(isset($_POST['id']))
-									{
+									if(isset($_POST['id'])){
 										$id=$_POST['id'];
 										$data=$db->where('id',$id)->objectBuilder()->getOne('Admin',[
 											'id','online','onlineFrom'
 										]);
-										if(!empty($data))
-										{
+										if(!empty($data)){
 											$_SESSION['DATA']['Chatroom']=[
 												'ID'=>$id,
 												'Token'=>$data->Token=strtoupper(md5(randomText(10).$id))
@@ -72,8 +66,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'getChatroomReady':
-									if(isset($_POST['Token']))
-									{
+									if(isset($_POST['Token'])){
 										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
 										$id=$_SESSION['DATA']['Chatroom']['ID'];
 										$data=$db->where("(receiverId={$id} AND senderId={$_SESSION['Admin']['id']})")->
@@ -83,14 +76,12 @@ switch($urlPath[1])
 											"UNIX_TIMESTAMP(createdAt) as createdAt"
 										]);
 										$data=array_reverse($data);
-										if(!empty($data))
-										{
+										if(!empty($data)){
 											$db->where('receiverId',$_SESSION['Admin']['id'])->update('ChatRoom',[
 												'seen'=>'1','notification'=>'1'
 											]);
-											foreach($data as &$item)
-											{
-												$item->sender=$item->senderId==$_SESSION['Admin']['id'] ? true : false;
+											foreach($data as &$item){
+												$item->sender=$item->senderId==$_SESSION['Admin']['id']?true:false;
 												unset($item->senderId);
 												$item->humanTiming=date('h:iA',$item->createdAt);
 											}
@@ -100,8 +91,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'sendMessage':
-									if(isset($_POST['text']) && isset($_POST['Token']))
-									{
+									if(isset($_POST['text'])&&isset($_POST['Token'])){
 										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
 										$id=$_SESSION['DATA']['Chatroom']['ID'];
 										if(empty(trim($_POST['text']))) return false;
@@ -111,8 +101,7 @@ switch($urlPath[1])
 											'senderId'=>$_SESSION['Admin']['id'],
 											'text'=>$text,
 										]);
-										if(!empty($id))
-										{
+										if(!empty($id)){
 											die(json_encode([
 												'id'=>$id,
 												'text'=>$text,
@@ -124,8 +113,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'getNewMessage':
-									if(isset($_POST['Token']))
-									{
+									if(isset($_POST['Token'])){
 										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
 										$id=$_SESSION['DATA']['Chatroom']['ID'];
 										$data=$db->where('senderId',$id)->
@@ -135,8 +123,7 @@ switch($urlPath[1])
 										objectBuilder()->get('ChatRoom',null,[
 											'id','text',"UNIX_TIMESTAMP(createdAt) as createdAt"
 										]);
-										if(!empty($data))
-										{
+										if(!empty($data)){
 											$db->where('receiverId',$_SESSION['Admin']['id'])->
 											update('ChatRoom',['seen'=>'1']);
 											foreach($data as &$item) $item->humanTiming=date('h:iA',$item->createdAt);
@@ -146,8 +133,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'checkSeen':
-									if(isset($_POST['data']) && isset($_POST['Token']))
-									{
+									if(isset($_POST['data'])&&isset($_POST['Token'])){
 										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
 										$id=$_SESSION['DATA']['Chatroom']['ID'];
 										$data=$_POST['data'];
@@ -162,15 +148,12 @@ switch($urlPath[1])
 							}
 							break;
 						case 'mechanizedScanning':
-							switch($urlPath[4])
-							{
+							switch($urlPath[4]){
 								case 'tools':
-									switch($urlPath[5])
-									{
+									switch($urlPath[5]){
 										case 'add':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])){
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'type'=>['required[دسته بندی]','in[انتخاب,دسته بندی]:'.implode(',',array_keys(ToolsType))],
@@ -191,8 +174,7 @@ switch($urlPath[1])
 												if(empty($data['propertyNumber'])) $data['propertyNumber']=null;
 												$data['QRCode']=randomText(25);
 												$id=$db->insert('MST',$data);
-												if((bool)$id)
-												{
+												if((bool)$id){
 													die(json_encode([
 														'type'=>'success',
 														'msg'=>'ابزار جدید با موفقیت ایجاد شد',
@@ -200,8 +182,7 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}else{
-													if($db->getLastErrno()==1062)
-													{
+													if($db->getLastErrno()==1062){
 														die(json_encode([
 															'type'=>'warning',
 															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
@@ -221,8 +202,7 @@ switch($urlPath[1])
 											}
 											break;
 										case 'getData':
-											if(isset($_POST['id']))
-											{
+											if(isset($_POST['id'])){
 												$_SESSION['DATA']['MechanizedScanning']['Tools']['EDIT']['ID']=$_POST['id'];
 												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MST',[
 													'type','size','company','propertyNumber','description','count'
@@ -230,9 +210,8 @@ switch($urlPath[1])
 											}
 											break;
 										case 'edit':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['EDIT']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Tools']['EDIT']['ID'])){
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'type'=>['required[دسته بندی]','in[انتخاب,دسته بندی]:'.implode(',',array_keys(ToolsType))],
@@ -252,8 +231,7 @@ switch($urlPath[1])
 												}
 												$check=$db->where('id',$_SESSION['DATA']['MechanizedScanning']['Tools']['EDIT']['ID'])->
 												update('MST',$data,1);
-												if($check)
-												{
+												if($check){
 													die(json_encode([
 														'type'=>'success',
 														'msg'=>'ابزار با موفقیت ویرایش شد',
@@ -261,8 +239,7 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}else{
-													if($db->getLastErrno()==1062)
-													{
+													if($db->getLastErrno()==1062){
 														die(json_encode([
 															'type'=>'warning',
 															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
@@ -282,9 +259,8 @@ switch($urlPath[1])
 											}
 											break;
 										case 'addSub':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Tools']['ID'])){
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
@@ -304,8 +280,7 @@ switch($urlPath[1])
 												$data['subId']=$_SESSION['DATA']['MechanizedScanning']['Tools']['ID'];
 												$data['type']=$_SESSION['DATA']['MechanizedScanning']['Tools']['TYPE'];
 												$id=$db->insert('MST',$data);
-												if((bool)$id)
-												{
+												if((bool)$id){
 													die(json_encode([
 														'type'=>'success',
 														'msg'=>'ابزار جدید با موفقیت ایجاد شد',
@@ -313,8 +288,7 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}else{
-													if($db->getLastErrno()==1062)
-													{
+													if($db->getLastErrno()==1062){
 														die(json_encode([
 															'type'=>'warning',
 															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
@@ -334,8 +308,7 @@ switch($urlPath[1])
 											}
 											break;
 										case 'getSubData':
-											if(isset($_POST['id']))
-											{
+											if(isset($_POST['id'])){
 												$_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID']=$_POST['id'];
 												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MST',[
 													'size','company','description','count'
@@ -343,9 +316,8 @@ switch($urlPath[1])
 											}
 											break;
 										case 'editSub':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SUB']['EDIT']['ID'])){
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
@@ -380,14 +352,12 @@ switch($urlPath[1])
 											}
 											break;
 										case 'getScannedData':
-											if(isset($_POST['code']))
-											{
+											if(isset($_POST['code'])){
 												$code=$_POST['code'];
 												$data=$db->where('QRCode',$code)->objectBuilder()->getOne('MST',[
 													'id','type','count'
 												]);
-												if(empty($data))
-												{
+												if(empty($data)){
 													die(json_encode([
 														'type'=>'danger',
 														'msg'=>'موردی پیدا نشد',
@@ -403,8 +373,7 @@ switch($urlPath[1])
 													$sub=$db->where('subId',$data->id)->get('MST',null,[
 														'id','size',"MST.count-(SELECT COUNT(id) FROM MSTHistory WHERE subToolId=MST.id AND status='0') as count"
 													]);
-													if(!empty($sub))
-													{
+													if(!empty($sub)){
 														$data=[$data,$sub];
 														$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']=true;
 													}
@@ -416,9 +385,8 @@ switch($urlPath[1])
 											}
 											break;
 										case 'record':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])){
 												$data=$_POST['data'];
 												$rules=[
 													'studentId'=>[
@@ -428,8 +396,7 @@ switch($urlPath[1])
 													'count'=>['required[تعداد]','numeric[تعداد]','min[تعداد,1]:1'],
 													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1']
 												];
-												if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']))
-												{
+												if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])){
 													$rules['subToolId']=[
 														'required[ابزار های زیر مجموعه]',
 														'in[انتخاب,ابزار های زیر مجموعه]:'.implode(',',array_column($db->where('subId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->get('MST',null,'id'),'id'))
@@ -444,22 +411,19 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}
-												if($data['status']=='0')
-												{
+												if($data['status']=='0'){
 													if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])) $db->where('subToolId',$data['subToolId']);
 													$check=$db->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
 													where('status','0')->getValue('MSTHistory','COUNT(id)');
-													$toolCount=isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']) ? $db->where('id',$data['subToolId'])->getOne('MST','count')['count'] : $_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['COUNT'];
-													if($toolCount-$check>=$data['count'])
-													{
+													$toolCount=isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])?$db->where('id',$data['subToolId'])->getOne('MST','count')['count']:$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['COUNT'];
+													if($toolCount-$check>=$data['count']){
 														for($i=0;$i<$data['count'];$i++) $id=$db->insert('MSTHistory',[
 															'studentId'=>$data['studentId'],
-															'subToolId'=>isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB']) ? $data['subToolId'] : null,
+															'subToolId'=>isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])?$data['subToolId']:null,
 															'status'=>$data['status'],
 															'toolId'=>$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID']
 														]);
-														if((bool)$id)
-														{
+														if((bool)$id){
 															die(json_encode([
 																'type'=>'success',
 																'msg'=>'درخواست شما با موفقیت انجام شد',
@@ -486,8 +450,7 @@ switch($urlPath[1])
 													if(isset($_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['SUB'])) $db->where('subToolId',$data['subToolId']);
 													$check=$db->where('studentId',$data['studentId'])->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Tools']['SCAN']['ID'])->
 													where('status','0')->update('MSTHistory',['status'=>'1'],$data['count']);
-													if($db->count>0)
-													{
+													if($db->count>0){
 														die(json_encode([
 															'type'=>'success',
 															'msg'=>'تعداد '.$db->count.' ابزار تحویل گرفته شد',
@@ -508,13 +471,12 @@ switch($urlPath[1])
 									}
 									break;
 								case 'equipments':
-									switch($urlPath[5])
-									{
+									switch($urlPath[5]){
 										case 'add':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
 											if(isset($_POST['data'])){
 												$data=$_POST['data'];
-												$data['accessories']=isset($data['accessories']) ? '1' : '0';
+												$data['accessories']=isset($data['accessories'])?'1':'0';
 												$validation=new Validation($data,[
 													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
@@ -561,8 +523,7 @@ switch($urlPath[1])
 												}
 											}
 										case 'getData':
-											if(isset($_POST['id']))
-											{
+											if(isset($_POST['id'])){
 												$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']=$_POST['id'];
 												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('MSE',[
 													'title','company','propertyNumber','accessories','count','status','description'
@@ -570,11 +531,10 @@ switch($urlPath[1])
 											}
 											break;
 										case 'edit':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID'])){
 												$data=$_POST['data'];
-												$data['accessories']=isset($data['accessories']) ? '1' : '0';
+												$data['accessories']=isset($data['accessories'])?'1':'0';
 												$validation=new Validation($data,[
 													'title'=>['required[نام]','length[100,سایز,حداکثر]:max,100'],
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
@@ -594,8 +554,7 @@ switch($urlPath[1])
 												}
 												$check=$db->where('id',$_SESSION['DATA']['MechanizedScanning']['Equipments']['EDIT']['ID'])->
 												update('MSE',$data,1);
-												if($check)
-												{
+												if($check){
 													die(json_encode([
 														'type'=>'success',
 														'msg'=>'تجهیزات با موفقیت ویرایش شد',
@@ -603,8 +562,7 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}else{
-													if($db->getLastErrno()==1062)
-													{
+													if($db->getLastErrno()==1062){
 														die(json_encode([
 															'type'=>'warning',
 															'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
@@ -624,14 +582,12 @@ switch($urlPath[1])
 											}
 											break;
 										case 'getScannedData':
-											if(isset($_POST['code']))
-											{
+											if(isset($_POST['code'])){
 												$code=$_POST['code'];
 												$data=$db->where('QRCode',$code)->objectBuilder()->getOne('MSE',[
 													'id','title','count'
 												]);
-												if(empty($data))
-												{
+												if(empty($data)){
 													die(json_encode([
 														'type'=>'danger',
 														'msg'=>'موردی پیدا نشد',
@@ -651,9 +607,8 @@ switch($urlPath[1])
 											}
 											break;
 										case 'record':
-											if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID']))
-											{
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data'])&&isset($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID'])){
 												$data=$_POST['data'];
 												$validation=new Validation($data,[
 													'studentId'=>[
@@ -671,19 +626,16 @@ switch($urlPath[1])
 														'data'=>null
 													]));
 												}
-												if($data['status']=='0')
-												{
+												if($data['status']=='0'){
 													$check=$db->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID'])->
 													where('status','0')->getValue('MSEHistory','COUNT(id)');
-													if($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['COUNT']-$check>=$data['count'])
-													{
+													if($_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['COUNT']-$check>=$data['count']){
 														for($i=0;$i<$data['count'];$i++) $id=$db->insert('MSEHistory',[
 															'studentId'=>$data['studentId'],
 															'status'=>$data['status'],
 															'toolId'=>$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID']
 														]);
-														if((bool)$id)
-														{
+														if((bool)$id){
 															die(json_encode([
 																'type'=>'success',
 																'msg'=>'درخواست شما با موفقیت انجام شد',
@@ -709,8 +661,7 @@ switch($urlPath[1])
 												}else{
 													$check=$db->where('studentId',$data['studentId'])->where('toolId',$_SESSION['DATA']['MechanizedScanning']['Equipments']['SCAN']['ID'])->
 													where('status','0')->update('MSEHistory',['status'=>'1'],$data['count']);
-													if($db->count>0)
-													{
+													if($db->count>0){
 														die(json_encode([
 															'type'=>'success',
 															'msg'=>'تعداد '.$db->count.' ابزار تحویل گرفته شد',
@@ -735,9 +686,8 @@ switch($urlPath[1])
 						case 'students':
 							switch($urlPath[4]){
 								case 'add':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']))
-									{
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
 										$data=$_POST['data'];
 										@$data['birthDay']=convertToGregorian($data['birthDay']);
 										$validation=new Validation($data,[
@@ -785,8 +735,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'getData':
-									if(isset($_POST['id']))
-									{
+									if(isset($_POST['id'])){
 										$_SESSION['DATA']['Students']['EDIT']['ID']=$_POST['id'];
 										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Students',[
 											'name','surname','name_en','surname_en','fatherName','nationalCode',
@@ -795,9 +744,8 @@ switch($urlPath[1])
 									}
 									break;
 								case 'edit':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']) && isset($_SESSION['DATA']['Students']['EDIT']['ID']))
-									{
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])&&isset($_SESSION['DATA']['Students']['EDIT']['ID'])){
 										$data=$_POST['data'];
 										@$data['birthDay']=convertToGregorian($data['birthDay']);
 										$validation=new Validation($data,[
@@ -825,8 +773,7 @@ switch($urlPath[1])
 										}
 										$check=$db->where('id',$_SESSION['DATA']['Students']['EDIT']['ID'])->
 										update('Students',$data,1);
-										if($check)
-										{
+										if($check){
 											die(json_encode([
 												'type'=>'success',
 												'msg'=>'کارآموز با موفقیت ویرایش شد',
@@ -835,24 +782,22 @@ switch($urlPath[1])
 											]));
 										}else{
 
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-													'err'=>-2,
-													'data'=>null
-												]));
-											}
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
 									}
 									break;
 							}
 							break;
 						case 'setting':
-							switch($urlPath[4])
-							{
+							switch($urlPath[4]){
 								case 'changePassword':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']))
-									{
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
 										$data=$_POST['data'];
 										$validation=new Validation($data,[
 											'new'=>['required[گذرواژه جدید]','length[گذرواژه جدید,حداکثر,50]:max,50','same[گذرواژه جدید,تکرار گذرواژه جدید]:repeat'],
@@ -870,13 +815,11 @@ switch($urlPath[1])
 										$check=(int)$db->where('id',$_SESSION['Admin']['id'])->
 										where('password',cryptPassword($data['yet'],$_SESSION['Admin']['username'],'HBAutomationAdminLogin'))->
 										getOne('Admin','id')['id'];
-										if($check!==0)
-										{
+										if($check!==0){
 											$check=$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
 												'password'=>$password=cryptPassword($data['new'],$_SESSION['Admin']['username'],'HBAutomationAdminLogin')
 											]);
-											if($check)
-											{
+											if($check){
 												$_SESSION['Admin']['password']=$password;
 												die(json_encode([
 													'type'=>'success',
@@ -903,11 +846,10 @@ switch($urlPath[1])
 									}
 									break;
 								case 'profile':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']))
-									{
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
 										$data=$_POST['data'];
-										$data['avatar']=isset($_FILES['file']) ? $_FILES['file'] : '';
+										$data['avatar']=isset($_FILES['file'])?$_FILES['file']:'';
 										$validation=new Validation($data,[
 											'name'=>['required[نام]','length[نام,حداکثر,75]:max,75'],
 											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,75]:max,75'],
@@ -923,11 +865,9 @@ switch($urlPath[1])
 												'data'=>null
 											]));
 										}
-										if(!empty($data['avatar']))
-										{
+										if(!empty($data['avatar'])){
 											$upload=new \Verot\Upload\Upload($data['avatar']);
-											if($upload->uploaded)
-											{
+											if($upload->uploaded){
 												$upload->file_new_name_body=sha1(randomCode(10));
 												$upload->image_resize=true;
 												$upload->image_x=250;
@@ -937,9 +877,8 @@ switch($urlPath[1])
 											}
 										}else unset($data['avatar']);
 										$check=$db->where('id',$_SESSION['Admin']['id'])->update('Admin',$data);
-										if($check)
-										{
-											if(!empty($_SESSION['Admin']['avatar']) && isset($data['avatar'])) unlink($_SESSION['Admin']['avatar']);
+										if($check){
+											if(!empty($_SESSION['Admin']['avatar'])&&isset($data['avatar'])) unlink($_SESSION['Admin']['avatar']);
 											die(json_encode([
 												'type'=>'success',
 												'msg'=>'اطلاعات حساب مدیریت شما با موفقیت ویرایش شد',
@@ -961,9 +900,8 @@ switch($urlPath[1])
 						case 'consumingMaterials':
 							switch($urlPath[4]){
 								case 'add':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']))
-									{
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
 										$data=$_POST['data'];
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
@@ -1000,104 +938,98 @@ switch($urlPath[1])
 										}
 									}
 									break;
-						default:
-							if($_SESSION['Admin']['id']==1)
-							{
-								switch($urlPath[3])
-								{
-									case 'manageAdmins':
-										switch($urlPath[4])
-										{
-											case 'add':
-												if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-												if(isset($_POST['data']))
-												{
-													$data=$_POST['data'];
-													$validation=new Validation($data,[
-														'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
-														'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
-														'nationalCode'=>['required[کد ملی]','NationalCode'],
-														'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-														'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
-													]);
-													if($validation->getStatus()){
-														die(json_encode([
-															'type'=>'danger',
-															'msg'=>$validation->getErrors(),
-															'err'=>-1,
-															'data'=>null
-														]));
-													}
-													$data['password']=cryptPassword($data['username'],$data['username'],'HBAutomationAdminLogin');
-													$id=$db->insert('Admin',$data);
-													if((bool)$id){
-														die(json_encode([
-															'type'=>'success',
-															'msg'=>'حساب مدیریت جدید با موفقیت ثبت شد',
-															'err'=>null,
-															'data'=>null
-														]));
-													}else{
-														if($db->getLastErrno()==1062)
-														{
-															die(json_encode([
-																'type'=>'warning',
-																'msg'=>'این کد ملی قبلا در سیستم ثبت شده',
-																'err'=>0,
-																'data'=>null
-															]));
-														}else{
-															die(json_encode([
-																'type'=>'warning',
-																'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-																'err'=>-2,
-																'data'=>null
-															]));
+								default:
+									if($_SESSION['Admin']['id']==1){
+										switch($urlPath[3]){
+											case 'manageAdmins':
+												switch($urlPath[4]){
+													case 'add':
+														if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+														if(isset($_POST['data'])){
+															$data=$_POST['data'];
+															$validation=new Validation($data,[
+																'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+																'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+																'nationalCode'=>['required[کد ملی]','NationalCode'],
+																'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
+																'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
+															]);
+															if($validation->getStatus()){
+																die(json_encode([
+																	'type'=>'danger',
+																	'msg'=>$validation->getErrors(),
+																	'err'=>-1,
+																	'data'=>null
+																]));
+															}
+															$data['password']=cryptPassword($data['username'],$data['username'],'HBAutomationAdminLogin');
+															$id=$db->insert('Admin',$data);
+															if((bool)$id){
+																die(json_encode([
+																	'type'=>'success',
+																	'msg'=>'حساب مدیریت جدید با موفقیت ثبت شد',
+																	'err'=>null,
+																	'data'=>null
+																]));
+															}else{
+																if($db->getLastErrno()==1062){
+																	die(json_encode([
+																		'type'=>'warning',
+																		'msg'=>'این کد ملی قبلا در سیستم ثبت شده',
+																		'err'=>0,
+																		'data'=>null
+																	]));
+																}else{
+																	die(json_encode([
+																		'type'=>'warning',
+																		'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																		'err'=>-2,
+																		'data'=>null
+																	]));
+																}
+															}
 														}
-													}
-												}
-												break;
-											case 'resetPassword':
-												if(isset($_POST['id']))
-												{
-													$data=$db->where('id',$_POST['id'])->getOne('Admin','username')['username'];
-													$check=$db->where('id',$_POST['id'])->update('Admin',[
-														'password'=>cryptPassword($data,$data,'HBAutomationAdminLogin')
-													]);
-													if($check){
-														die(json_encode([
-															'type'=>'success',
-															'msg'=>'گذرواژه با موفقیت بازنشانی شد',
-															'err'=>null,
-															'data'=>null
-														]));
-													}else{
-														die(json_encode([
-															'type'=>'warning',
-															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-															'err'=>-2,
-															'data'=>null
-														]));
-													}
+														break;
+													case 'resetPassword':
+														if(isset($_POST['id'])){
+															$data=$db->where('id',$_POST['id'])->getOne('Admin','username')['username'];
+															$check=$db->where('id',$_POST['id'])->update('Admin',[
+																'password'=>cryptPassword($data,$data,'HBAutomationAdminLogin')
+															]);
+															if($check){
+																die(json_encode([
+																	'type'=>'success',
+																	'msg'=>'گذرواژه با موفقیت بازنشانی شد',
+																	'err'=>null,
+																	'data'=>null
+																]));
+															}else{
+																die(json_encode([
+																	'type'=>'warning',
+																	'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																	'err'=>-2,
+																	'data'=>null
+																]));
+															}
+														}
+														break;
 												}
 												break;
 										}
-										break;
-								}
+									}
+									break;
 							}
-							break;
 					}
-				}else{
-					if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-					if(isset($_POST['data']))
-					{
+				}
+				else{
+					if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+					if(isset($_POST['data'])){
 						$data=$_POST['data'];
 						$validation=new Validation($data,[
 							'username'=>'required[نام کاربری]',
 							'password'=>'required[گذرواژه]'
 						]);
-						if($validation->getStatus())
-						{
+						if($validation->getStatus()){
 							die(json_encode([
 								'type'=>'danger',
 								'msg'=>$validation->getErrors(),
@@ -1110,8 +1042,7 @@ switch($urlPath[1])
 						objectBuilder()->getOne('Admin',[
 							'id','username'
 						]);
-						if(empty($account))
-						{
+						if(empty($account)){
 							echo json_encode([
 								'type'=>'danger',
 								'msg'=>'نام کاربری و یا گذرواژه اشتباه است',
@@ -1137,5 +1068,4 @@ switch($urlPath[1])
 				}
 				break;
 		}
-		break;
 }

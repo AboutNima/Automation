@@ -96,7 +96,7 @@
 		</div>
 	</div>
 </div>
-<div class="popup" popup-size="lg" popup-title="ثبت مواد مصرفی جدید" id="add">
+<div class="popup" popup-size="md" popup-title="ثبت مواد مصرفی جدید" id="add">
 	<div class="validation-message no-margin top"></div>
 	<form action="/ajax/account/admin/consumingMaterials/add" class="ajax-handler" method="post">
 		<input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
@@ -145,7 +145,7 @@
 		</div>
 	</form>
 </div>
-<div class="popup" popup-size="lg" popup-title="ویرایش کارآموز" id="edit">
+<div class="popup" popup-size="md" popup-title="ویرایش کارآموز" id="edit">
 	<div class="validation-message no-margin top"></div>
 	<form action="/ajax/account/admin/students/edit" class="ajax-handler" method="post">
 		<input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
@@ -231,8 +231,4 @@
 			</div>
 		</div>
 	</form>
-</div>
-<div class="popup" popup-size="md" popup-title="اسکن کارآموز" id="scan">
-	<div class="validation-message no-margin top"></div>
-	.Scan
 </div>

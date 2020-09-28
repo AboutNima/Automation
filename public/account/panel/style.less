@@ -679,6 +679,9 @@ header{
                     cursor: pointer;
                     display: none;
                 }
+                .loader{
+                    display: none;
+                }
                 &:before{
                     position: absolute;
                     content: 'جهت شروع گفت و گو یک نفر را انتخاب کنید';
@@ -768,6 +771,31 @@ header{
     }
     &.open{
         left: 0;
+    }
+    &.loading{
+        & > .body{
+            .chat{
+                .body{
+                    .loader{
+                        display: block;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        height: 100%;
+                        width: 100%;
+                        background: rgba(0,0,0,0.6);
+                        i{
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%,-50%);
+                            font-size: 35px;
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -128,10 +128,10 @@
                         <option value="0">راهنمایی</option>
                         <option value="1">دیپلم</option>
                         <option value="2">فوق دیپلم</option>
-                        <option value="3">لیسانس</option>
-                        <option value="4">فوق لیسانس</option>
-                        <option value="5">دکتری</option>
-                        <option value="6">فوق دکتری</option>
+                        <option value="3">کارشناسی</option>
+                        <option value="4">کارشناس ارشد</option>
+                        <option value="5">دکترا</option>
+                        <option value="6">فوق دکترا</option>
                     </select>
                 </div>
             </div>
@@ -215,10 +215,10 @@
                         <option value="0">راهنمایی</option>
                         <option value="1">دیپلم</option>
                         <option value="2">فوق دیپلم</option>
-                        <option value="3">لیسانس</option>
-                        <option value="4">فوق لیسانس</option>
-                        <option value="5">دکتری</option>
-                        <option value="6">فوق دکتری</option>
+                        <option value="3">کارشناسی</option>
+                        <option value="4">کارشناس ارشد</option>
+                        <option value="5">دکترا</option>
+                        <option value="6">فوق دکترا</option>
                     </select>
                 </div>
             </div>

@@ -52,6 +52,7 @@
         </div>
         <div class="chat">
             <div class="body">
+                <div class="loader"><i class="far fa-spinner-third fa-spin"></i></div>
                 <span id="unread">0</span>
                 <ul></ul>
             </div>

@@ -6,7 +6,11 @@ $(document).ready(function()
     var sendAudio=$('#sendAudio')[0]
     var chatroom=$('.chatroom')
 
-    function openChatroom(){chatroom.addClass('open')}
+    function openChatroom(loading=false)
+    {
+        if(loading) chatroom.addClass('loading')
+        chatroom.addClass('open')
+    }
     function closeChatroom()
     {
         chatroom.removeClass('open')
@@ -18,7 +22,8 @@ $(document).ready(function()
     }
     function loadChatroom(id)
     {
-        openChatroom()
+        openChatroom(true)
+        chatroom.find('.chat .body ul').html('')
         $.post('/ajax/account/admin/chatroom/loadChat',{id:id},function(data)
         {
             data=$.parseJSON(data)
@@ -32,15 +37,14 @@ $(document).ready(function()
 
             chatroom.find('> .body').addClass('active')
 
-            getChatroomReady()
+            setTimeout(function(){getChatroomReady()},300)
         })
-
     }
     function getChatroomReady()
     {
         $.post('/ajax/account/admin/chatroom/getChatroomReady',{Token:Token},function(data)
         {
-            chatroom.find('.chat .body ul').html('')
+            chatroom.removeClass('loading')
             resetTextarea()
             if(data=='') return false
             data=$.parseJSON(data)
@@ -148,6 +152,7 @@ $(document).ready(function()
         var text=$.trim($('#chatArea').val())
         if(window.Token===null) return false;
         sendMessage(text)
+        $('#chatArea').focus()
     })
     function getNewMessage()
     {

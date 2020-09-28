@@ -45,6 +45,7 @@ foreach($urlPath as $item)
 		case 'information': $urlCrt[]='مشخصات ثبت شده';break;
 		case 'mechanizedScanning': $urlCrt[]='سیستم اسکن مکانیزه (QRCode)';break;
 		case 'students': $urlCrt[]='کارآموزان';break;
+		case 'consumingMaterials': $urlCrt[]='مواد مصرفی';break;
 		case 'manageAdmins': $urlCrt[]='مدیریت مدیران';break;
 		default: $urlCrt[]=$item;break;
 	}
@@ -169,6 +170,24 @@ switch($urlPath[0])
 					}
 					else require_once 'app/controller/account/admin/students/list.php';
 					break;
+				case 'consumingMaterials':
+					if(!empty($id=(int)$urlPath[2]))
+					{
+						switch($urlPath[3])
+						{
+							case 'information':
+								require_once 'app/controller/account/admin/consumingMaterials/information.php';
+								break;
+							case 'history':
+								require_once 'app/controller/account/admin/consumingMaterials/history.php';
+								break;
+							default:
+								header('location:/404');
+								break;
+						}
+					}
+					else require_once 'app/controller/account/admin/consumingMaterials/list.php';
+          break;
 				case 'manageAdmins':
 					require_once 'app/controller/account/admin/manageAdmins.php';
 					break;

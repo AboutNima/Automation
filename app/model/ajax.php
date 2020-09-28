@@ -958,6 +958,48 @@ switch($urlPath[1])
 									break;
 							}
 							break;
+						case 'consumingMaterials':
+							switch($urlPath[4]){
+								case 'add':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
+											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
+											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3,4,5,6,7,8'],
+											'count'=>['required[تعداد]','numeric[تعداد]'],
+											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(empty($data['company'])) $data['company']=null;
+										if(empty($data['description'])) $data['description']=null;
+										$id=$db->insert('CMaterials',$data);
+										if((bool)$id){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد جدید با موفقیت ثبت شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
 						default:
 							if($_SESSION['Admin']['id']==1)
 							{

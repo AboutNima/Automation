@@ -177,7 +177,7 @@ switch($urlPath[1])
 													'size'=>['length[سایز,حداکثر,10]:max,10'],
 													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[موجودی]','numeric[موجودی]']
 												]);
 												if($validation->getStatus()){
@@ -239,7 +239,7 @@ switch($urlPath[1])
 													'size'=>['length[سایز,حداکثر,10]:max,10'],
 													'company'=>['required[شرکت سازنده]','length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[موجودی]','numeric[موجودی]']
 												]);
 												if($validation->getStatus()){
@@ -289,7 +289,7 @@ switch($urlPath[1])
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
 													'count'=>['required[موجودی]','numeric[موجودی]'],
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 												]);
 												if($validation->getStatus()){
 													die(json_encode([
@@ -350,7 +350,7 @@ switch($urlPath[1])
 												$validation=new Validation($data,[
 													'size'=>['required[سایز]','length[سایز,حداکثر,10]:max,10'],
 													'count'=>['required[موجودی]','numeric[موجودی]'],
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 												]);
 												if($validation->getStatus()){
 													die(json_encode([
@@ -520,7 +520,7 @@ switch($urlPath[1])
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[تعداد]','numeric[تعداد]'],
 													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1,2']
 												]);
@@ -580,7 +580,7 @@ switch($urlPath[1])
 													'company'=>['length[شرکت سازنده,حداکثر,100]:max,100'],
 													'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 													'accessories'=>'in[انتخاب,لوازم جانبی]:0,1',
-													'description'=>['length[توضیحات,حداکثر,100]:max,100','length[توضیحات,حداقل,10]:min,10'],
+													'description'=>['length[توضیحات,حداکثر,255]:max,255','length[توضیحات,حداقل,10]:min,10'],
 													'count'=>['required[تعداد]','numeric[تعداد]'],
 													'status'=>['required[وضعیت]','in[انتخاب,وضعیت]:0,1,2']
 												]);

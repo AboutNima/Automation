@@ -11,7 +11,7 @@
 			<div class="menu">
 				<a href="#add" class="popup-active" popup-target="#scan"><span><i class="fas fa-scanner"></i> اسکن تجهیزات </span></a>
 				<a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت تجهیزات جدید </span></a>
-				<a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
+				<a href="#exportExcel" class="exportTable" e-filename="تجهیزات و امکانات" e-target=".table-mask"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
 			</div>
 		</div>
 	</div>

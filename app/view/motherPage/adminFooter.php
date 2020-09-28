@@ -24,6 +24,37 @@
 <script src="/public/account/panel/script.js"></script>
 <script src="/public/account/panel/chatroom.js"></script>
 <?php
+if(@$tableExport):
+?>
+    <script type="text/javascript" src="/public/construct/table2excel.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+            $(document).on('click','.exportTable',function()
+            {
+                var this_=$(this)
+                var target=this_.attr('e-target')
+                var fileName=this_.attr('e-filename')
+                if(typeof fileName==typeof undefined || fileName==false || fileName==''){alert('missing file name');return false;}
+                if(typeof target==typeof undefined || target==false || target==''){alert('missing target');return false;}
+                table2excel(target,fileName)
+            })
+            function table2excel(target,fileName,preserveColors=true,img=false,link=true,inputs=true)
+            {
+                var options={
+                    exclude: '.noExl',
+                    filename: Math.floor((Math.random() * 9999999) + 1000000)+'.'+fileName,
+                    exclude_img: img,
+                    exclude_links: link,
+                    exclude_inputs: inputs,
+                    preserveColors: preserveColors
+                }
+                $(target).table2excel(options);
+            }
+        })
+    </script>
+<?php
+endif;
 if(isset($script))
 {
 	if(!is_array($script)) $script=[$script];

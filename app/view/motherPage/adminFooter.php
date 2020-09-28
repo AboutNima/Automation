@@ -22,7 +22,7 @@
 <script src="/public/construct/validationMessage/validation.js"></script>
 <script src="/public/construct/table/table.js"></script>
 <script src="/public/account/panel/script.js"></script>
-<script src="/public/account/panel/chatRoom.js"></script>
+<script src="/public/account/panel/chatroom.js"></script>
 <?php
 if(isset($script))
 {

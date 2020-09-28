@@ -22,7 +22,7 @@
 					<th> ردیف </th>
 					<th> نام و نام خانوادگی </th>
 					<th> کد ملی </th>
-					<th> شماره تلفن </th>
+					<th> شماره همراه </th>
 					<th> تاریخ تولد </th>
 					<th> گزینه ها </th>
 				</tr>
@@ -113,13 +113,13 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask required" mask-type mask-label="شماره تلفن همراه">
-                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن همراه کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره همراه">
+                    <input type="text" name="data[phoneNumber]" placeholder="شماره همراه کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
-                    <input type="text" name="data[homeNumber]" placeholder="شماره تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="تلفن ثابت">
+                    <input type="text" name="data[homeNumber]" placeholder="تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
@@ -128,10 +128,10 @@
                         <option value="0">راهنمایی</option>
                         <option value="1">دیپلم</option>
                         <option value="2">فوق دیپلم</option>
-                        <option value="3">لیسانس</option>
-                        <option value="4">فوق لیسانس</option>
-                        <option value="5">دکتری</option>
-                        <option value="6">فوق دکتری</option>
+                        <option value="3">کارشناسی</option>
+                        <option value="4">کارشناس ارشد</option>
+                        <option value="5">دکترا</option>
+                        <option value="6">فوق دکترا</option>
                     </select>
                 </div>
             </div>
@@ -200,13 +200,13 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask required" mask-type mask-label="شماره تلفن همراه">
-                    <input type="text" name="data[phoneNumber]" placeholder="شماره تلفن همراه کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask required" mask-type mask-label="شماره همراه">
+                    <input type="text" name="data[phoneNumber]" placeholder="شماره همراه کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
-                    <input type="text" name="data[homeNumber]" placeholder="شماره تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
+                <div class="input-mask" mask-type mask-label="تلفن ثابت">
+                    <input type="text" name="data[homeNumber]" placeholder="تلفن ثابت کارآموز را وارد کنید" autocomplete="off">
                 </div>
             </div>
             <div class="col-sm-4">
@@ -215,10 +215,10 @@
                         <option value="0">راهنمایی</option>
                         <option value="1">دیپلم</option>
                         <option value="2">فوق دیپلم</option>
-                        <option value="3">لیسانس</option>
-                        <option value="4">فوق لیسانس</option>
-                        <option value="5">دکتری</option>
-                        <option value="6">فوق دکتری</option>
+                        <option value="3">کارشناسی</option>
+                        <option value="4">کارشناس ارشد</option>
+                        <option value="5">دکترا</option>
+                        <option value="6">فوق دکترا</option>
                     </select>
                 </div>
             </div>

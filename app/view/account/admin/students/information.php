@@ -42,12 +42,12 @@
 				</div>
 			</div>
 			<div class="col-sm-4">
-				<div class="input-mask" mask-type mask-label="شماره تلفن همراه">
+				<div class="input-mask" mask-type mask-label="شماره همراه">
 					<input type="text" value="<?php echo $data->phoneNumber ?>" disabled>
 				</div>
 			</div>
 			<div class="col-sm-4">
-				<div class="input-mask" mask-type mask-label="شماره تلفن ثابت">
+				<div class="input-mask" mask-type mask-label="تلفن ثابت">
 					<input type="text" value="<?php echo $data->homeNumber ?>" disabled>
 				</div>
 			</div>

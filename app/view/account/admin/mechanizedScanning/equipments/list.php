@@ -20,7 +20,7 @@
 			<table>
 				<thead>
 				<tr>
-					<th> ردیف </th>
+					<th class="noExl"> ردیف </th>
 					<th> نام </th>
 					<th> شماره اموال </th>
                     <th> موجودی کل </th>
@@ -29,7 +29,7 @@
                     <th> شرکت سازنده </th>
                     <th> لوازم جانبی </th>
 					<th> وضعیت </th>
-					<th> گزینه ها </th>
+					<th class="noExl"> گزینه ها </th>
 				</tr>
 				</thead>
 				<tbody>
@@ -39,7 +39,7 @@
 					foreach($data as $item):
                     ?>
 						<tr>
-							<td><?php echo $num++ ?></td>
+							<td class="noExl"><?php echo $num++ ?></td>
 							<td><?php echo $item->title; ?></td>
 							<td><?php echo sprintf('%04d',$item->propertyNumber); ?></td>
 							<td><?php echo $item->count ?></td>
@@ -84,7 +84,7 @@
                                     <span class="label label-success"> سالم </span>
 								<?php endif; ?>
                             </td>
-                            <td>
+                            <td class="noExl">
 								<div class="more">
 									<div class="item">
 										<i class="fal fa-ellipsis-h"></i>

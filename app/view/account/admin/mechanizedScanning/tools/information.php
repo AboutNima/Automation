@@ -67,7 +67,6 @@
             </div>
             <div class="menu">
                 <a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت ابزار جدید </span></a>
-                <a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
             </div>
         </div>
     </div>
@@ -120,7 +119,7 @@
 				else:
 					?>
                     <tr>
-                        <td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+                        <td colspan="6" class="no-data"> موردی برای نمایش وجود ندارد! </td>
                     </tr>
 				<?php
 				endif;

@@ -34,6 +34,12 @@
 				if(!empty($data)):
 					$num=1;
 					foreach($data as $item):
+                        $a=[
+							'0'=>'میلی گرم',
+							'1'=>1,
+							'2'=>2
+						];
+					echo $a[$item->unit];
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
@@ -86,7 +92,7 @@
 				else:
 					?>
 					<tr>
-						<td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+						<td colspan="8" class="no-data"> موردی برای نمایش وجود ندارد! </td>
 					</tr>
 				<?php
 				endif;

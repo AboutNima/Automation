@@ -57,7 +57,7 @@
 				else:
 					?>
 					<tr>
-						<td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+						<td colspan="6" class="no-data"> موردی برای نمایش وجود ندارد! </td>
 					</tr>
 				<?php
 				endif;

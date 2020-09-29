@@ -14,6 +14,7 @@ $script=[
 	'/public/account/admin/mechanizedScanning/tools/list'
 ];
 $link='/public/construct/QRCodeReader/qrcode-reader.min';
+$tableExport=true;
 require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/mechanizedScanning/tools/list.php';
 require_once 'app/controller/motherPage/adminFooter.php';

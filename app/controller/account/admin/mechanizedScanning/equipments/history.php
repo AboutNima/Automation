@@ -11,6 +11,7 @@ objectBuilder()->get('MSEHistory',null,[
 	'MSEHistory.status'
 ]);
 $urlCrt[3]=$data->title;
+$tableExport=true;
 $script='/public/account/admin/mechanizedScanning/tools/information';
 require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/mechanizedScanning/equipments/history.php';

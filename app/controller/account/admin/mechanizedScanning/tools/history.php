@@ -13,6 +13,7 @@ objectBuilder()->get('MSTHistory',null,[
 	'UNIX_TIMESTAMP(MSTHistory.createdAt) as createdAt','UNIX_TIMESTAMP(MSTHistory.updatedAt) as updatedAt',
 	'MSTHistory.status'
 ]);
+$tableExport=true;
 $urlCrt[3]=$data->type=strtr($data->type,ToolsType);
 $script='/public/account/admin/mechanizedScanning/tools/information';
 require_once 'app/controller/motherPage/adminHeader.php';

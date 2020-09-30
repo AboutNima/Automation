@@ -38,7 +38,7 @@
                             <td><?php echo $item->name; ?></td>
                             <td><span class="label label-warning"><?php echo $item->username; ?></span></td>
                             <td><?php echo $item->phoneNumber; ?></td>
-                            <td><?php echo empty($item->onlineFrom) ? "<span class='label label-warning'> ثبت نشده </span>" : $item->onlineFrom  ?></td>
+                            <td><?php echo empty($item->onlineFrom) ? "<span class='label label-warning'> ثبت نشده </span>" : $calendar->date("j F Y ساعت H:i",$item->onlineFrom)  ?></td>
                             <td>
                                 <div class="more">
                                     <div class="item">
@@ -56,7 +56,7 @@
 				else:
 					?>
                     <tr>
-                        <td colspan="9" class="no-data"> موردی برای نمایش وجود ندارد! </td>
+                        <td colspan="6" class="no-data"> موردی برای نمایش وجود ندارد! </td>
                     </tr>
 				<?php
 				endif;

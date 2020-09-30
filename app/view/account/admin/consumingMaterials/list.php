@@ -64,7 +64,7 @@
 										<i class="fal fa-ellipsis-h"></i>
 									</div>
 									<div class="menu">
-										<a href="/account/students/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه مواد مصرفی </span></a>
+										<a href="/account/consumingMaterials/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه مواد مصرفی </span></a>
 										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
 										<a href="#delete" data-id="<?php echo $item->id ?>"><span><i class="far fa-trash"></i> حذف </span></a>
 									</div>

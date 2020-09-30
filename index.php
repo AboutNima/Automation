@@ -175,9 +175,6 @@ switch($urlPath[0])
 					{
 						switch($urlPath[3])
 						{
-							case 'information':
-								require_once 'app/controller/account/admin/consumingMaterials/information.php';
-								break;
 							case 'history':
 								require_once 'app/controller/account/admin/consumingMaterials/history.php';
 								break;

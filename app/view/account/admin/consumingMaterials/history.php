@@ -22,15 +22,10 @@
 					$num=1;
 					foreach($history as $item):
 						$item->unit=strtr($item->unit, [
-							'0'=>'میلی گرم',
+							'0'=>'عدد',
 							'1'=>'گرم',
-							'2'=>'کیلوگرم',
-							'3'=>'میلی متر',
-							'4'=>'سانتی متر',
-							'5'=>'متر',
-							'6'=>'میلی لیتر',
-							'7'=>'لیتر',
-							'8'=>'عدد',
+							'2'=>'متر',
+							'3'=>'لیتر'
 						])
 						?>
 						<tr>
@@ -40,10 +35,12 @@
 								<?php
 								if($item->changeRate<0):
 									?>
+                                    <span class="label label-danger"><i class="fa fa-arrow-down"></i></span>
 									<span class="label label-danger"> <?php echo str_replace('-','',$item->changeRate).' '.$item->unit.' '.'کاهش'; ?> </span>
 								<?php
 								else:
 									?>
+                                    <span class="label label-success"><i class="fa fa-arrow-up"></i></span>
 									<span class="label label-success"> <?php echo str_replace('+','',$item->changeRate).' '.$item->unit.' '.'افزایش'; ?> </span>
 								<?php
 								endif;

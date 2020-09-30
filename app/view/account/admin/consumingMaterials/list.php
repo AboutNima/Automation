@@ -35,21 +35,20 @@
 					$num=1;
 					foreach($data as $item):
 						$item->unit=strtr($item->unit,[
-							'0'=>'میلی گرم',
-							'1'=>'گرم',
-							'2'=>'کیلوگرم',
-							'3'=>'میلی متر',
-							'4'=>'سانتی متر',
-							'5'=>'متر',
-							'6'=>'میلی لیتر',
-							'7'=>'لیتر',
-							'8'=>'عدد',
+							'0'=>'عدد',
+                            '1'=>'گرم',
+                            '2'=>'متر',
+                            '3'=>'لیتر'
 						])
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
 							<td><?php echo $item->title; ?></td>
-							<td><?php echo $item->company; ?></td>
+							<td>
+								<?php if(empty($item->company)): ?>
+                                    <span class="label label-warning"> ثبت نشده </span>
+								<?php else: echo $item->company; endif; ?>
+                            </td>
 							<td><span class="label label-primary"><?php echo $item->unit; ?></span></td>
 							<td><?php echo $item->count; ?></td>
 							<td>
@@ -104,15 +103,10 @@
 			<div class="col-sm-6">
 				<div class="input-mask required" mask-type="select:search" mask-label="واحد شمارش">
 					<select name="data[unit]">
-						<option value="0">میلی گرم</option>
+						<option value="0">عدد</option>
 						<option value="1">گرم</option>
-						<option value="2">کیلوگرم</option>
-						<option value="3">میلی متر</option>
-						<option value="4">سانتی متر</option>
-						<option value="5">متر</option>
-						<option value="6">میلی لیتر</option>
-						<option value="7">لیتر</option>
-						<option value="8">عدد</option>
+						<option value="2">متر</option>
+						<option value="3">لیتر</option>
 					</select>
 				</div>
 			</div>
@@ -153,15 +147,10 @@
             <div class="col-sm-6">
                 <div class="input-mask required" mask-type="select:search" mask-label="واحد شمارش">
                     <select name="data[unit]">
-                        <option value="0">میلی گرم</option>
+                        <option value="0">عدد</option>
                         <option value="1">گرم</option>
-                        <option value="2">کیلوگرم</option>
-                        <option value="3">میلی متر</option>
-                        <option value="4">سانتی متر</option>
-                        <option value="5">متر</option>
-                        <option value="6">میلی لیتر</option>
-                        <option value="7">لیتر</option>
-                        <option value="8">عدد</option>
+                        <option value="2">متر</option>
+                        <option value="3">لیتر</option>
                     </select>
                 </div>
             </div>

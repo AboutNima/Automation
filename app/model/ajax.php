@@ -906,7 +906,7 @@ switch($urlPath[1])
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
 											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
-											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3,4,5,6,7,8'],
+											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
 											'count'=>['required[تعداد]','numeric[تعداد]'],
 											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
 										]);
@@ -953,7 +953,7 @@ switch($urlPath[1])
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
 											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
-											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3,4,5,6,7,8'],
+											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
 											'count'=>['required[تعداد]','numeric[تعداد]'],
 											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
 										]);

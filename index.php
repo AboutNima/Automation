@@ -188,6 +188,7 @@ switch($urlPath[0])
 				case 'manageAdmins':
 					require_once 'app/controller/account/admin/manageAdmins.php';
 					break;
+					
 			}
 
 		}else{

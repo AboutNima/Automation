@@ -11,7 +11,8 @@
 				<thead>
 				<tr>
 					<th> ردیف </th>
-					<th> نام و نام خانوادگی </th>
+					<th> نام و نام خانوادگی کار آموز </th>
+					<th> نوع تغییرات </th>
 					<th> میزان تغییرات </th>
 					<th> تاریخ </th>
 				</tr>
@@ -21,7 +22,7 @@
 				if(!empty($history)):
 					$num=1;
 					foreach($history as $item):
-						$item->unit=strtr($item->unit, [
+						$item->unit=strtr($item->unit,[
 							'0'=>'عدد',
 							'1'=>'گرم',
 							'2'=>'متر',
@@ -34,19 +35,18 @@
 							<td>
 								<?php
 								if($item->changeRate<0):
-									?>
-                                    <span class="label label-danger"><i class="fa fa-arrow-down"></i></span>
-									<span class="label label-danger"> <?php echo str_replace('-','',$item->changeRate).' '.$item->unit.' '.'کاهش'; ?> </span>
-								<?php
+                                ?>
+                                    <i class="far fa-long-arrow-down text-danger"></i>
+                                <?php
 								else:
-									?>
-                                    <span class="label label-success"><i class="fa fa-arrow-up"></i></span>
-									<span class="label label-success"> <?php echo str_replace('+','',$item->changeRate).' '.$item->unit.' '.'افزایش'; ?> </span>
+                                ?>
+                                    <i class="far fa-long-arrow-down text-danger"></i>
 								<?php
 								endif;
 								?>
-							</td>
-							<td><?php echo $calendar->date("j F Y ساعت H:i",$item->updatedAt) ?></td>
+                            </td>
+                            <td><?php echo str_replace(['-','+'],'',$item->changeRate) ?></td>
+                            <td><?php echo $calendar->date("j F Y ساعت H:i",$item->updatedAt) ?></td>
 						</tr>
 					<?php
 					endforeach;

@@ -122,6 +122,9 @@ $(document).ready(function()
     $('#chatArea').on('keyup',function(e)
     {
         var val=$.trim($(this).val())
+        if((/^[A-Za-z]*$/).test(val[0]) && val!=='') $(this).addClass('ltr-direction')
+        else $(this).removeClass('ltr-direction')
+
         var code=e.keyCode ? e.keyCode : e.which
 
         if(code==13 && !e.shiftKey)

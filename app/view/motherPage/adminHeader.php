@@ -57,12 +57,14 @@
                 <ul></ul>
             </div>
             <div class="footer">
-                <p> ارسال سریع با SHIFT+Enter و برای رفتن سر خط Enter </p>
-                <textarea rows="1" placeholder="پیامی ارسال کنید ..." id="chatArea"></textarea>
-                <div>
-                    <i class="far fa-paper-plane fa-flip-horizontal" id="sendMessage" style="display: none"></i>
-                    <i class="far fa-paperclip" id="sendFile"></i>
+                <div class="top">
+                    <p> ارسال سریع با SHIFT+EnterEnter </p>
+                    <div>
+                        <i class="far fa-paper-plane fa-flip-horizontal" id="sendMessage" style="display: none"></i>
+                        <i class="far fa-paperclip" id="sendFile"></i>
+                    </div>
                 </div>
+                <textarea rows="1" placeholder="پیامی ارسال کنید ..." id="chatArea"></textarea>
             </div>
         </div>
     </div>

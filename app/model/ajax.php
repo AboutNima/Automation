@@ -1022,7 +1022,7 @@ switch($urlPath[1])
 														'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
 														'nationalCode'=>['required[کد ملی]','NationalCode'],
 														'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-														'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
+														'username'=>['required[نام کاربری]','usernameCharacter[نام کاربری]','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
 													]);
 													if($validation->getStatus()){
 														die(json_encode([

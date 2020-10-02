@@ -63,6 +63,7 @@
 										<i class="fal fa-ellipsis-h"></i>
 									</div>
 									<div class="menu">
+                                        <a href="#changeRate" data-id="<?php echo $item->id ?>"><span><i class="fas fa-exchange"></i> تغییر موجودی </span></a>
 										<a href="/account/consumingMaterials/<?php echo $item->id ?>/history"><span><i class="fas fa-history"></i> تاریخچه مواد مصرفی </span></a>
 										<a href="#edit" data-id="<?php echo $item->id ?>"><span><i class="far fa-file-edit"></i> ویرایش </span></a>
 										<a href="#delete" data-id="<?php echo $item->id ?>"><span><i class="far fa-trash"></i> حذف </span></a>
@@ -185,6 +186,37 @@
             <div class="hr"></div>
             <div class="input-mask no-mask-margin">
                 <button class="btn btn-danger float-left"> حذف مواد </button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="popup" popup-size="sm" popup-title="تغییر موجودی" id="changeRate">
+    <div class="validation-message no-margin top"></div>
+    <form action="/ajax/account/admin/consumingMaterials/changeRate" class="ajax-handler" method="post">
+        <input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
+        <input type="text" name="data[count]" id="count"  hidden>
+        <div class="row">
+            <div class="col-12">
+                <div class="information">
+                    <h6></h6>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type="radio" mask-label="نوع تغییرات">
+                    <input type="radio" name="data[type]" value="0" label="افزایش">
+                    <input type="radio" name="data[type]" value="1" label="کاهش">
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="میزان تغییرت">
+                    <input type="text" name="data[changeRate]" placeholder="میزان تغییرات را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <div class="clearFix">
+            <div class="hr"></div>
+            <div class="input-mask no-mask-margin">
+                <button class="btn btn-primary float-left"> تغییر موجودی </button>
             </div>
         </div>
     </form>

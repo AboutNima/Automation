@@ -1007,6 +1007,64 @@ switch($urlPath[1])
 										}
 									}
 									break;
+								case 'changeRate':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])&&isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+										$data=$_POST['data'];
+										$changeRate=$data['changeRate'];
+										$validation=new Validation($data,[
+											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],
+											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if($data['type']==0){
+											$data=['count'=>$data['count']+$data['changeRate']];
+											$changeRate='+'.$changeRate;
+										}
+										else{
+											$data=['count'=>$data['count']-$data['changeRate']];
+											$changeRate='-'.$changeRate;
+										}
+										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
+										update('CMaterials',$data,1);
+										if($check){
+											$data=null;
+											$data['CMId']=$_SESSION['DATA']['CMaterials']['EDIT']['ID'];
+											$data['changeRate']=$changeRate;
+											$check=$db->insert('CMHistory',$data);
+											if(!$check){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-3,
+													'data'=>null
+												]));
+											}
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
 								default:
 									if($_SESSION['Admin']['id']==1){
 										switch($urlPath[3]){

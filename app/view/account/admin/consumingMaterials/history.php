@@ -31,7 +31,11 @@
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
-							<td><?php echo $item->name ?></td>
+							<td>
+                                <?php
+                                    if(empty($item->name)) echo 'سیستم'; else echo $item->name;
+                                ?>
+                            </td>
 							<td>
 								<?php
 								if($item->changeRate<0):

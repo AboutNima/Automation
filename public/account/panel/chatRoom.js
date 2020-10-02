@@ -93,7 +93,7 @@ $(document).ready(function()
             receiveAudio.play()
         }
 
-        resetTextarea()
+        if(whoSend=='me') resetTextarea()
     }
     function resetTextarea()
     {

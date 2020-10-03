@@ -988,7 +988,7 @@ switch($urlPath[1])
 								case 'delete':
 									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
 									if(isset($_POST['id'])){
-										$check=$db->where('id', $_POST['id'])->delete('CMaterials',null);
+										$check=$db->where('id',$_POST['id'])->delete('CMaterials',null);
 										if($check){
 											die(json_encode([
 												'type'=>'success',
@@ -1007,7 +1007,65 @@ switch($urlPath[1])
 										}
 									}
 									break;
+								case 'changeRate':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])&&isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+										$data=$_POST['data'];
+										$changeRate=$data['changeRate'];
+										$validation=new Validation($data,[
+											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],
+											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if($data['type']==0){
+											$data=['count'=>$data['count']+$data['changeRate']];
+											$changeRate='+'.$changeRate;
+										}else{
+											$data=['count'=>$data['count']-$data['changeRate']];
+											$changeRate='-'.$changeRate;
+										}
+										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
+										update('CMaterials',$data,1);
+										if($check){
+											$data=null;
+											$data['CMId']=$_SESSION['DATA']['CMaterials']['EDIT']['ID'];
+											$data['changeRate']=$changeRate;
+											$check=$db->insert('CMHistory',$data);
+											if(!$check){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-3,
+													'data'=>null
+												]));
+											}
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
 							}
+							break;
 						default:
 							if($_SESSION['Admin']['id']==1){
 								switch($urlPath[3]){
@@ -1022,7 +1080,7 @@ switch($urlPath[1])
 														'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
 														'nationalCode'=>['required[کد ملی]','NationalCode'],
 														'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-														'username'=>['required[نام کاربری]','usernameCharacter[نام کاربری]','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
+														'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
 													]);
 													if($validation->getStatus()){
 														die(json_encode([
@@ -1089,8 +1147,7 @@ switch($urlPath[1])
 							}
 							break;
 					}
-				}
-				else{
+				}else{
 					if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
 					if(isset($_POST['data'])){
 						$data=$_POST['data'];
@@ -1135,6 +1192,5 @@ switch($urlPath[1])
 						}
 					}
 				}
-				break;
 		}
 }

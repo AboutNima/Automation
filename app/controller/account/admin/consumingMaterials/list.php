@@ -2,7 +2,7 @@
 $data=$db->orderBy('id','DESC')->
 objectBuilder()->get('CMaterials',null,[
 	'id','title','company','unit','description','UNIX_TIMESTAMP(createdAt) as createdAt',
-	"count+(SELECT SUM(changeRate) FROM CMHistory WHERE CMId=CMaterials.id) as count"
+	'count'
 ]);
 $script='/public/account/admin/consumingMaterials/list';
 require_once 'app/controller/motherPage/adminHeader.php';

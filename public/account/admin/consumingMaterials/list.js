@@ -35,7 +35,6 @@ $(document).ready(function()
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })
-
     $("a[href='#delete']").click(function(){
         $('#del').attr('value', $(this).attr('data-id'))
         activePopup('#delete')
@@ -53,18 +52,23 @@ $(document).ready(function()
     $("a[href='#changeRate']").click(function(){
         $.post('/ajax/account/admin/consumingMaterials/getData',{id:$(this).attr('data-id')},function(data){
             data=$.parseJSON(data)[0];
-            if(data.unit=='0'){
-                data.unit='عدد'
-            } else if(data.unit=='1'){
-                data.unit='گرم'
-            } else if(data.unit=='2'){
-                data.unit='متر'
-            }else if(data.unit=='3'){
-                data.unit='لیتر'
+            switch(data.unit){
+                case '0':
+                    data.unit='عدد'
+                    break;
+                case '1':
+                    data.unit='گرم'
+                    break;
+                case '2':
+                    data.unit='متر'
+                    break;
+                case '3':
+                    data.unit='لیتر'
+                    break;
             }
-            $('#changeRate .information h6').html(
-                "<span>"+data.title+"</span></br><span class='text-success'>موجودی فعلی: "+data.count+" "+data.unit+"</span>"
-            )
+            $('#title span').html(data.title)
+            $('#countUsed span').html((data.countUsed*-1)+' '+data.unit)
+            $('#countLeft span').html(data.count+' '+data.unit)
             $('#count').attr('value', data.count)
             activePopup('#changeRate')
         })

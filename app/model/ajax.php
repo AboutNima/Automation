@@ -943,7 +943,8 @@ switch($urlPath[1])
 									if(isset($_POST['id'])){
 										$_SESSION['DATA']['CMaterials']['EDIT']['ID']=$_POST['id'];
 										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('CMaterials',[
-											'id','title','propertyNumber','company','unit','count','description'
+											'id','title','propertyNumber','company','unit','count','description',
+											'(SELECT SUM(changeRate) FROM CMHistory WHERE changeRate<0) as countUsed'
 										]);
 									}
 									break;
@@ -988,7 +989,7 @@ switch($urlPath[1])
 									}
 									break;
 								case 'delete':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 									if(isset($_POST['id'])){
 										$check=$db->where('id',$_POST['id'])->delete('CMaterials',null);
 										if($check){
@@ -1010,8 +1011,8 @@ switch($urlPath[1])
 									}
 									break;
 								case 'changeRate':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data'])&&isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
 										$data=$_POST['data'];
 										$changeRate=$data['changeRate'];
 										$validation=new Validation($data,[
@@ -1027,36 +1028,22 @@ switch($urlPath[1])
 												'data'=>null
 											]));
 										}
-										if($data['type']==0){
-											$data=['count'=>$data['count']+$data['changeRate']];
-											$changeRate='+'.$changeRate;
-										}else{
-											$data=['count'=>$data['count']-$data['changeRate']];
-											$changeRate='-'.$changeRate;
-										}
+										$data=$data['type']=='0' ? ['count'=>$data['count']+$data['changeRate']] : ['count'=>$data['count']-$data['changeRate']];
 										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
 										update('CMaterials',$data,1);
 										if($check){
-											$data=null;
-											$data['CMId']=$_SESSION['DATA']['CMaterials']['EDIT']['ID'];
-											$data['changeRate']=$changeRate;
+											$data=[
+												'CMId'=>$_SESSION['DATA']['CMaterials']['EDIT']['ID'],
+												'changeRate'=>$changeRate
+											];
 											$check=$db->insert('CMHistory',$data);
-											if(!$check){
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-													'err'=>-3,
-													'data'=>null
-												]));
-											}
 											die(json_encode([
 												'type'=>'success',
-												'msg'=>'مواد با موفقیت ویرایش شد',
+												'msg'=>'مواد مصرفی با موفقیت ویرایش شد',
 												'err'=>null,
 												'data'=>null
 											]));
 										}else{
-
 											die(json_encode([
 												'type'=>'warning',
 												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',

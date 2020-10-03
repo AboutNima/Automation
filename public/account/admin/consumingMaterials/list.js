@@ -79,7 +79,7 @@ $(document).ready(function()
         ajaxHandler($(this)).done(function(data)
         {
             data=$.parseJSON(data)
-            validationMessage(false,data.msg,data.type,data.err,'#delete .validation-message')
+            validationMessage(false,data.msg,data.type,data.err,'#changeRate .validation-message')
             if(data.err==null) setTimeout(function(){location.reload()},1500)
         })
     })

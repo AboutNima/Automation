@@ -27,7 +27,8 @@
 							'1'=>'گرم',
 							'2'=>'متر',
 							'3'=>'لیتر'
-						])
+						]);
+                        if(empty($item->name)) $item->name='سیستم';
 						?>
 						<tr>
 							<td><?php echo $num++ ?></td>
@@ -40,7 +41,7 @@
                                 <?php
 								else:
                                 ?>
-                                    <i class="far fa-long-arrow-down text-danger"></i>
+                                    <i class="far fa-long-arrow-up text-success"></i>
 								<?php
 								endif;
 								?>

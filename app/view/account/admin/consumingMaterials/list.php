@@ -220,7 +220,18 @@
                     <input type="radio" name="data[type]" value="1" label="کاهش">
                 </div>
             </div>
-            <div class="col-12">
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type="select:search" mask-label="تغییر موجودی توسط">
+                    <select name="data[studentId]">
+                        <option value="0">سیستم</option>
+                        <?php
+                            foreach($students as $item):
+                        ?>
+                        <option value="<?php echo $item->id ?>"><?php echo $item->name; endforeach; ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
                 <div class="input-mask required" mask-type mask-label="میزان تغییرت">
                     <input type="text" name="data[changeRate]" placeholder="میزان تغییرات را وارد کنید" autocomplete="off">
                 </div>

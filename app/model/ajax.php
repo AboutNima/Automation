@@ -930,12 +930,21 @@ switch($urlPath[1])
 												'data'=>null
 											]));
 										}else{
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+													'err'=>0,
+													'data'=>null
+												]));
+											}else{
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
 										}
 									}
 									break;
@@ -978,13 +987,21 @@ switch($urlPath[1])
 												'data'=>null
 											]));
 										}else{
-
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+													'err'=>0,
+													'data'=>null
+												]));
+											}else{
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
 										}
 									}
 									break;
@@ -1014,11 +1031,13 @@ switch($urlPath[1])
 									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
 										$data=$_POST['data'];
+										$studentId=$data['studentId'];
 										$changeRate=$data['type']=='0' ? $data['changeRate'] : -1*$data['changeRate'];
 										$validation=new Validation($data,[
 											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
 											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],
-											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]']
+											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
+											'studentId'=>['required[تغییر موجودی توسط]']
 										]);
 										if($validation->getStatus()){
 											die(json_encode([
@@ -1034,12 +1053,13 @@ switch($urlPath[1])
 										if($check){
 											$data=[
 												'CMId'=>$_SESSION['DATA']['CMaterials']['EDIT']['ID'],
-												'changeRate'=>$changeRate
+												'changeRate'=>$changeRate,
+												'studentId'=>$studentId
 											];
 											$check=$db->insert('CMHistory',$data);
 											die(json_encode([
 												'type'=>'success',
-												'msg'=>'مواد مصرفی با موفقیت ویرایش شد',
+												'msg'=>'موجودی با موفقیت تغییر کرد',
 												'err'=>null,
 												'data'=>null
 											]));

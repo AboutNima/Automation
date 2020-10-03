@@ -4,6 +4,9 @@ objectBuilder()->get('CMaterials',null,[
 	'id','title','propertyNumber','company','unit','description','UNIX_TIMESTAMP(createdAt) as createdAt',
 	'count'
 ]);
+$students=$db->objectBuilder()->get('Students',null,[
+	'id',"CONCAT(name,' ',surname) as name"
+]);
 $script='/public/account/admin/consumingMaterials/list';
 require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/consumingMaterials/list.php';

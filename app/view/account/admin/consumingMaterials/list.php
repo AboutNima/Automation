@@ -195,19 +195,20 @@
     <form action="/ajax/account/admin/consumingMaterials/changeRate" class="ajax-handler" method="post">
         <input type="text" name="Token" value="<?php echo $_SESSION['Token'] ?>" hidden>
         <input type="text" name="data[count]" id="count"  hidden>
+        <div class="informaton">
+            <p class="fism" id="title"> عنوان مواد مصرفی: <span class="float-left fisr"> چای گلستان عراقی محصول پاکستان </span> </p>
+            <p class="mt-2 fism" id="countUsed"> مصرف شده: <span class="float-left text-danger fisr"> 20 متر </span> </p>
+            <p class="mt-2 fism" id="countLeft"> باقی مانده: <span class="float-left text-success fisr"> 2 متر </span> </p>
+        </div>
+        <div class="hr no-margin"></div>
         <div class="row">
             <div class="col-12">
-                <div class="information">
-                    <h6></h6>
-                </div>
-            </div>
-            <div class="col-sm-6">
                 <div class="input-mask required" mask-type="radio" mask-label="نوع تغییرات">
-                    <input type="radio" name="data[type]" value="0" label="افزایش">
+                    <input type="radio" name="data[type]" value="0" label="افزایش" checked>
                     <input type="radio" name="data[type]" value="1" label="کاهش">
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-12">
                 <div class="input-mask required" mask-type mask-label="میزان تغییرت">
                     <input type="text" name="data[changeRate]" placeholder="میزان تغییرات را وارد کنید" autocomplete="off">
                 </div>

@@ -1,7 +1,7 @@
 <?php
 $data=$db->orderBy('id','DESC')->
 objectBuilder()->get('CMaterials',null,[
-	'id','title','company','unit','description','UNIX_TIMESTAMP(createdAt) as createdAt',
+	'id','title','propertyNumber','company','unit','description','UNIX_TIMESTAMP(createdAt) as createdAt',
 	'count'
 ]);
 $script='/public/account/admin/consumingMaterials/list';

@@ -21,9 +21,10 @@
 				<tr>
 					<th> ردیف </th>
 					<th> نام </th>
+					<th> شماره اموال </th>
 					<th> شرکت سازنده </th>
 					<th> واحد شمارش </th>
-					<th> تعداد </th>
+					<th> موجودی </th>
 					<th> توضیحات </th>
 					<th> تاریخ ثبت </th>
 					<th> گزینه ها </th>
@@ -44,6 +45,7 @@
 						<tr>
 							<td><?php echo $num++ ?></td>
 							<td><?php echo $item->title; ?></td>
+							<td><?php echo $item->propertyNumber; ?></td>
 							<td>
 								<?php if(empty($item->company)): ?>
                                     <span class="label label-warning"> ثبت نشده </span>

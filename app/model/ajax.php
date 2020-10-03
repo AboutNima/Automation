@@ -1014,7 +1014,7 @@ switch($urlPath[1])
 									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
 									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
 										$data=$_POST['data'];
-										$changeRate=$data['changeRate'];
+										$changeRate=$data['type']=='0' ? $data['changeRate'] : -1*$data['changeRate'];
 										$validation=new Validation($data,[
 											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
 											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],

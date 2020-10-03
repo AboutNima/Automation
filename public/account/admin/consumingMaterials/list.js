@@ -76,10 +76,8 @@ $(document).ready(function()
     $(document).on('submit','#changeRate form',function(e)
     {
         e.preventDefault();
-        ajaxHandler($(this),false).done(function(data)
+        ajaxHandler($(this)).done(function(data)
         {
-            ajaxT.html(data)
-            return false
             data=$.parseJSON(data)
             validationMessage(false,data.msg,data.type,data.err,'#delete .validation-message')
             if(data.err==null) setTimeout(function(){location.reload()},1500)

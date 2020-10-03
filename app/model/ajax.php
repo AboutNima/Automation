@@ -988,7 +988,7 @@ switch($urlPath[1])
 								case 'delete':
 									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
 									if(isset($_POST['id'])){
-										$check=$db->where('id', $_POST['id'])->delete('CMaterials',null);
+										$check=$db->where('id',$_POST['id'])->delete('CMaterials',null);
 										if($check){
 											die(json_encode([
 												'type'=>'success',
@@ -1028,8 +1028,7 @@ switch($urlPath[1])
 										if($data['type']==0){
 											$data=['count'=>$data['count']+$data['changeRate']];
 											$changeRate='+'.$changeRate;
-										}
-										else{
+										}else{
 											$data=['count'=>$data['count']-$data['changeRate']];
 											$changeRate='-'.$changeRate;
 										}
@@ -1065,90 +1064,90 @@ switch($urlPath[1])
 										}
 									}
 									break;
-								default:
-									if($_SESSION['Admin']['id']==1){
-										switch($urlPath[3]){
-											case 'manageAdmins':
-												switch($urlPath[4]){
-													case 'add':
-														if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-														if(isset($_POST['data'])){
-															$data=$_POST['data'];
-															$validation=new Validation($data,[
-																'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
-																'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
-																'nationalCode'=>['required[کد ملی]','NationalCode'],
-																'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-																'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
-															]);
-															if($validation->getStatus()){
-																die(json_encode([
-																	'type'=>'danger',
-																	'msg'=>$validation->getErrors(),
-																	'err'=>-1,
-																	'data'=>null
-																]));
-															}
-															$data['password']=cryptPassword($data['username'],$data['username'],'HBAutomationAdminLogin');
-															$id=$db->insert('Admin',$data);
-															if((bool)$id){
-																die(json_encode([
-																	'type'=>'success',
-																	'msg'=>'حساب مدیریت جدید با موفقیت ثبت شد',
-																	'err'=>null,
-																	'data'=>null
-																]));
-															}else{
-																if($db->getLastErrno()==1062){
-																	die(json_encode([
-																		'type'=>'warning',
-																		'msg'=>'این کد ملی قبلا در سیستم ثبت شده',
-																		'err'=>0,
-																		'data'=>null
-																	]));
-																}else{
-																	die(json_encode([
-																		'type'=>'warning',
-																		'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-																		'err'=>-2,
-																		'data'=>null
-																	]));
-																}
-															}
+							}
+							break;
+						default:
+							if($_SESSION['Admin']['id']==1){
+								switch($urlPath[3]){
+									case 'manageAdmins':
+										switch($urlPath[4]){
+											case 'add':
+												if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+												if(isset($_POST['data'])){
+													$data=$_POST['data'];
+													$validation=new Validation($data,[
+														'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+														'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+														'nationalCode'=>['required[کد ملی]','NationalCode'],
+														'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
+														'username'=>['required[نام کاربری]','usernameCharacter','length[نام کاربری ,حداکثر,25]:max,25','length[نام کاربری ,حداقل,3]:min,3']
+													]);
+													if($validation->getStatus()){
+														die(json_encode([
+															'type'=>'danger',
+															'msg'=>$validation->getErrors(),
+															'err'=>-1,
+															'data'=>null
+														]));
+													}
+													$data['password']=cryptPassword($data['username'],$data['username'],'HBAutomationAdminLogin');
+													$id=$db->insert('Admin',$data);
+													if((bool)$id){
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'حساب مدیریت جدید با موفقیت ثبت شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														if($db->getLastErrno()==1062){
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'این کد ملی قبلا در سیستم ثبت شده',
+																'err'=>0,
+																'data'=>null
+															]));
+														}else{
+															die(json_encode([
+																'type'=>'warning',
+																'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+																'err'=>-2,
+																'data'=>null
+															]));
 														}
-														break;
-													case 'resetPassword':
-														if(isset($_POST['id'])){
-															$data=$db->where('id',$_POST['id'])->getOne('Admin','username')['username'];
-															$check=$db->where('id',$_POST['id'])->update('Admin',[
-																'password'=>cryptPassword($data,$data,'HBAutomationAdminLogin')
-															]);
-															if($check){
-																die(json_encode([
-																	'type'=>'success',
-																	'msg'=>'گذرواژه با موفقیت بازنشانی شد',
-																	'err'=>null,
-																	'data'=>null
-																]));
-															}else{
-																die(json_encode([
-																	'type'=>'warning',
-																	'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-																	'err'=>-2,
-																	'data'=>null
-																]));
-															}
-														}
-														break;
+													}
+												}
+												break;
+											case 'resetPassword':
+												if(isset($_POST['id'])){
+													$data=$db->where('id',$_POST['id'])->getOne('Admin','username')['username'];
+													$check=$db->where('id',$_POST['id'])->update('Admin',[
+														'password'=>cryptPassword($data,$data,'HBAutomationAdminLogin')
+													]);
+													if($check){
+														die(json_encode([
+															'type'=>'success',
+															'msg'=>'گذرواژه با موفقیت بازنشانی شد',
+															'err'=>null,
+															'data'=>null
+														]));
+													}else{
+														die(json_encode([
+															'type'=>'warning',
+															'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+															'err'=>-2,
+															'data'=>null
+														]));
+													}
 												}
 												break;
 										}
-									}
-									break;
+										break;
+								}
 							}
+							break;
 					}
-				}
-				else{
+				}else{
 					if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
 					if(isset($_POST['data'])){
 						$data=$_POST['data'];
@@ -1193,6 +1192,5 @@ switch($urlPath[1])
 						}
 					}
 				}
-				break;
 		}
 }

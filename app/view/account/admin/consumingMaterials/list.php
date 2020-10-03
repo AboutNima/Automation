@@ -96,7 +96,12 @@
 					<input type="text" name="data[title]" placeholder="نام مواد را وارد کنید" autocomplete="off">
 				</div>
 			</div>
-			<div class="col-sm-6">
+            <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="شماره اموال">
+                    <input type="text" name="data[propertyNumber]" placeholder="شماره اموال مواد را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+			<div class="col-12">
 				<div class="input-mask" mask-type mask-label="شرکت سازنده">
 					<input type="text" name="data[company]" placeholder="شرکت سازنده مواد را وارد کنید" autocomplete="off">
 				</div>
@@ -141,6 +146,11 @@
                 </div>
             </div>
             <div class="col-sm-6">
+                <div class="input-mask required" mask-type mask-label="شماره اموال">
+                    <input type="text" name="data[propertyNumber]" placeholder="شماره اموال مواد را وارد کنید" autocomplete="off">
+                </div>
+            </div>
+            <div class="col-12">
                 <div class="input-mask" mask-type mask-label="شرکت سازنده">
                     <input type="text" name="data[company]" placeholder="شرکت سازنده مواد را وارد کنید" autocomplete="off">
                 </div>

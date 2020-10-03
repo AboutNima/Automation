@@ -18,6 +18,7 @@ $(document).ready(function()
             data=$.parseJSON(data)[0];
             changeSelect('#edit',$.parseJSON(data.unit))
             $("#edit input[name='data[title]']").val(data.title)
+            $("#edit input[name='data[propertyNumber]']").val(data.propertyNumber)
             $("#edit input[name='data[company]']").val(data.company)
             $("#edit input[name='data[count]']").val(data.count)
             $("#edit textarea").val(data.description);

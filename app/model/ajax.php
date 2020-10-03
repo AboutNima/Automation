@@ -906,6 +906,7 @@ switch($urlPath[1])
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
 											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
+											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
 											'count'=>['required[تعداد]','numeric[تعداد]'],
 											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
@@ -942,7 +943,7 @@ switch($urlPath[1])
 									if(isset($_POST['id'])){
 										$_SESSION['DATA']['CMaterials']['EDIT']['ID']=$_POST['id'];
 										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('CMaterials',[
-											'id','title','company','unit','count','description'
+											'id','title','propertyNumber','company','unit','count','description'
 										]);
 									}
 									break;
@@ -953,6 +954,7 @@ switch($urlPath[1])
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
 											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
+											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
 											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
 											'count'=>['required[تعداد]','numeric[تعداد]'],
 											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']

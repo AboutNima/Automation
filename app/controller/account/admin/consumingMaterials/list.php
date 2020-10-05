@@ -7,6 +7,7 @@ objectBuilder()->get('CMaterials',null,[
 $students=$db->objectBuilder()->get('Students',null,[
 	'id',"CONCAT(name,' ',surname) as name"
 ]);
+$_SESSION['DATA']['CMaterials']['ChangeRate']['ID']=array_column($students,'id');
 $script='/public/account/admin/consumingMaterials/list';
 require_once 'app/controller/motherPage/adminHeader.php';
 require_once 'app/view/account/admin/consumingMaterials/list.php';

@@ -1037,7 +1037,7 @@ switch($urlPath[1])
 											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
 											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],
 											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
-											'studentId'=>['required[تغییر موجودی توسط]']
+											'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])]
 										]);
 										if($validation->getStatus()){
 											die(json_encode([

@@ -959,7 +959,7 @@ switch($urlPath[1])
 									break;
 								case 'edit':
 									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data'])&&isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
 										$data=$_POST['data'];
 										$validation=new Validation($data,[
 											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
@@ -1029,7 +1029,8 @@ switch($urlPath[1])
 									break;
 								case 'changeRate':
 									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID']))
+									{
 										$data=$_POST['data'];
 										$studentId=$data['studentId'];
 										$changeRate=$data['type']=='0' ? $data['changeRate'] : -1*$data['changeRate'];

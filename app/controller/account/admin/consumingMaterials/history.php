@@ -7,7 +7,7 @@ $history=$db->join('CMaterials','CMaterials.id=CMId')->join('Students','Students
 orderBy('CMHistory.id','DESC')->objectBuilder()->get('CMHistory',null,[
 	"CONCAT(name,' ',surname) as name",
 	'UNIX_TIMESTAMP(CMHistory.createdAt) as createdAt','UNIX_TIMESTAMP(CMHistory.updatedAt) as updatedAt',
-	'changeRate','unit'
+	'changeRate','unit','(CMHistory.description) as description'
 ]);
 $urlCrt[2]=$data->title;
 $script='/public/account/admin/consumingMaterials/information';

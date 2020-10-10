@@ -236,6 +236,11 @@
                     <input type="text" name="data[changeRate]" placeholder="میزان تغییرات را وارد کنید" autocomplete="off">
                 </div>
             </div>
+            <div class="col-12">
+                <div class="input-mask" mask-type mask-label="توضیحات">
+                    <textarea name="data[description]" rows="3"></textarea>
+                </div>
+            </div>
         </div>
         <div class="clearFix">
             <div class="hr"></div>

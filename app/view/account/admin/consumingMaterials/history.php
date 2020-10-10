@@ -14,6 +14,7 @@
 					<th> نام و نام خانوادگی کار آموز </th>
 					<th> نوع تغییرات </th>
 					<th> میزان تغییرات </th>
+					<th> توضیحات </th>
 					<th> تاریخ </th>
 				</tr>
 				</thead>
@@ -47,6 +48,11 @@
 								?>
                             </td>
                             <td><?php echo str_replace(['-','+'],'',$item->changeRate) ?></td>
+                            <td>
+                                <?php if(empty($item->description)): ?>
+                                <span class="label label-warning">ثبت نشده</span>
+                                <?php else: echo $item->description; endif; ?>
+                            </td>
                             <td><?php echo $calendar->date("j F Y ساعت H:i",$item->updatedAt) ?></td>
 						</tr>
 					<?php

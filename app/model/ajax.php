@@ -953,7 +953,7 @@ switch($urlPath[1])
 										$_SESSION['DATA']['CMaterials']['EDIT']['ID']=$_POST['id'];
 										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('CMaterials',[
 											'id','title','propertyNumber','company','unit','count','description',
-											'(SELECT SUM(changeRate) FROM CMHistory WHERE changeRate<0) as countUsed'
+											'(SELECT SUM(changeRate) FROM CMHistory WHERE changeRate<0 AND CMId='.$_POST['id'].') as countUsed'
 										]);
 									}
 									break;
@@ -1033,13 +1033,26 @@ switch($urlPath[1])
 									{
 										$data=$_POST['data'];
 										$studentId=$data['studentId'];
-										$changeRate=$data['type']=='0' ? $data['changeRate'] : -1*$data['changeRate'];
-										$validation=new Validation($data,[
-											'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
-											'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]'],
-											'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
-											'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])]
-										]);
+										$description=$data['description'];
+										if($data['type']=='0'){
+											$changeRate=$data['changeRate'];
+											$validation=new Validation($data,[
+												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','min[میزان تغییرات,1]:1'],
+												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
+												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
+												'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+											]);
+										}else{
+											$changeRate=-1*$data['changeRate'];
+											$validation=new Validation($data,[
+												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','max[میزان تغییرات,موجودی]:'.$data['count']],
+												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
+												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
+												'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+											]);
+										}
 										if($validation->getStatus()){
 											die(json_encode([
 												'type'=>'danger',
@@ -1055,7 +1068,8 @@ switch($urlPath[1])
 											$data=[
 												'CMId'=>$_SESSION['DATA']['CMaterials']['EDIT']['ID'],
 												'changeRate'=>$changeRate,
-												'studentId'=>$studentId
+												'studentId'=>$studentId,
+												'description'=>$description
 											];
 											$check=$db->insert('CMHistory',$data);
 											die(json_encode([

@@ -1041,7 +1041,7 @@ switch($urlPath[1])
 												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','min[میزان تغییرات,1]:1'],
 												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
 												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
-												'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
 											]);
 										}else{
 											$changeRate=-1*$data['changeRate'];
@@ -1050,7 +1050,7 @@ switch($urlPath[1])
 												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','max[میزان تغییرات,موجودی]:'.$data['count']],
 												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
 												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
-												'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
 											]);
 										}
 										if($validation->getStatus()){
@@ -1216,5 +1216,7 @@ switch($urlPath[1])
 						}
 					}
 				}
+				break;
 		}
+		break;
 }

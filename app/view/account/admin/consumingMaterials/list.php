@@ -237,7 +237,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <div class="input-mask" mask-type mask-label="توضیحات">
+                <div class="input-mask required" mask-type mask-label="توضیحات">
                     <textarea name="data[description]" rows="3"></textarea>
                 </div>
             </div>

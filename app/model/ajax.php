@@ -1090,6 +1090,211 @@ switch($urlPath[1])
 									break;
 							}
 							break;
+						case 'accounting':
+							switch($urlPath[4])
+							{
+								case 'title':
+									switch($urlPath[5])
+									{
+										case 'add':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$id=$db->insert('ACCTitles',$data);
+												if((bool)$id){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'سرفصل جدید با موفقیت ایجاد شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'getData':
+											if(isset($_POST['id'])){
+												$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCTitles',[
+													'title'
+												]);
+											}
+											break;
+										case 'edit':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$check=$db->where('id',$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID'])->
+												update('ACCTitles',$data,1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'سرفصل با موفقیت ویرایش شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+									}
+									break;
+								case 'costIncome':
+									switch($urlPath[5])
+									{
+										case 'add':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']))
+											{
+												$data=$_POST['data'];
+												$data['price']=str_replace(',','',$data['price']);
+												$validation=new Validation($data,[
+													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
+													'titleId'=>[
+														'required[سرفصل]',
+														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
+													],
+													'price'=>['required[مبلغ]','numeric[مبلغ]'],
+													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
+													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$id=$db->insert('ACCCostIncome',$data);
+												if((bool)$id){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'مورد جدید با موفقیت ثبت شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'getData':
+											if(isset($_POST['id'])){
+												$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCCostIncome',[
+													'titleId','subject','price','income','description'
+												]);
+											}
+											break;
+										case 'edit':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']))
+											{
+												$data=$_POST['data'];
+												$data['price']=str_replace(',','',$data['price']);
+												$validation=new Validation($data,[
+													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
+													'titleId'=>[
+														'required[سرفصل]',
+														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
+													],
+													'price'=>['required[مبلغ]','numeric[مبلغ]'],
+													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
+													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$check=$db->where('id',$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID'])->
+												update('ACCCostIncome',$data,1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'درخواست شما با موفقیت انجام شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'remove':
+											if(isset($_POST['id'])){
+												$check=$db->where('id',$_POST['id'])->delete('ACCCostIncome',1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'درخواست شما با موفقیت انجام شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+									}
+									break;
+							}
+							break;
 						default:
 							if($_SESSION['Admin']['id']==1){
 								switch($urlPath[3]){

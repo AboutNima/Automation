@@ -204,9 +204,7 @@ switch($urlPath[0])
 					break;
 			}
 
-		}else{
-			require_once 'app/controller/account/admin/login.php';
-		}
+		}else require_once 'app/controller/account/admin/login.php';
 		break;
 
 	// Page error

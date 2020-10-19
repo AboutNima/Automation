@@ -47,6 +47,9 @@ foreach($urlPath as $item)
 		case 'students': $urlCrt[]='کارآموزان';break;
 		case 'consumingMaterials': $urlCrt[]='مواد مصرفی';break;
 		case 'manageAdmins': $urlCrt[]='مدیریت مدیران';break;
+		case 'accounting': $urlCrt[]='حسابداری';break;
+		case 'title': $urlCrt[]='سرفصل ها';break;
+		case 'costIncome': $urlCrt[]='هزینه و درآمد';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -188,7 +191,17 @@ switch($urlPath[0])
 				case 'manageAdmins':
 					require_once 'app/controller/account/admin/manageAdmins.php';
 					break;
-					
+				case 'accounting':
+					switch($urlPath[2])
+					{
+						case 'title':
+							require_once 'app/controller/account/admin/accounting/title.php';
+							break;
+						case 'costIncome':
+							require_once 'app/controller/account/admin/accounting/costIncome.php';
+							break;
+					}
+					break;
 			}
 
 		}else{

@@ -131,7 +131,7 @@
                     <li><a href="/account"><i class="fad fa-cubes"></i><p> داشبورد </p></a></li>
 					<?php
 					if($_SESSION['Admin']['id']=='1'):
-						?>
+                    ?>
                         <li><a href="/account/manageAdmins"><i class="fad fa-users-crown"></i><p> مدیریت مدیران </p></a></li>
 					<?php
 					endif;
@@ -149,6 +149,9 @@
                             </div>
 						</span>
                     </li>
+                    <li class="title"> حسابداری </li>
+                    <li><a href="/account/accounting/title/list"><i class="fa fa-list"></i><p> سرفصل ها </p></a></li>
+                    <li><a href="/account/accounting/costIncome/list"><i class="fa fa-list"></i><p> ثبت هزینه و درآمد </p></a></li>
                 </ul>
             </div>
         </div>

@@ -10,7 +10,6 @@
 			</div>
 			<div class="menu">
 				<a href="#add" class="popup-active" popup-target="#add"><span><i class="fas fa-layer-plus"></i> ثبت خبر جدید </span></a>
-				<a href="#add"><span><i class="fas fa-file-excel"></i> خروجی اکسل </span></a>
 			</div>
 		</div>
 	</div>

@@ -980,11 +980,13 @@ header.minimize{
         z-index: 1;
         position: relative;
         background: #fff;
-        padding: 15px 25px;
+        padding: 15px 20px;
         border-radius: 4px 4px 0 0;
         border-bottom: 1px solid #ebedf2;
         .title{
-            float: right;
+            h6,p{
+                .hiddenText(calc(100% - 150px));
+            }
             h6{
                 font-size: 17px !important;
                 font-weight: 500 !important;
@@ -1043,17 +1045,38 @@ header.minimize{
                 }
             }
         }
-        & ~ div{
+        & + div{
             border-radius: 0 0 4px 4px !important;
+        }
+        .back{
+            color: #252525;
+            background: #efefef;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 500;
+            i{
+                vertical-align: middle;
+                margin-right: 3px;
+            }
+        }
+        &.fix-height{
+            padding: 0 20px;
+            height: 60px;
+            line-height: 60px;
         }
     }
     & > .body{
         .clearFix();
+        width: 100%;
         background: #fff;
         border-radius: 4px;
         padding: 20px;
         .listing{
             li{
+                &:not(:first-child){
+                    margin-top: 15px;
+                }
                 p{
                     font-size: 13px;
                     font-weight: bold;

@@ -1,6 +1,6 @@
 ;<?php
 ;die(); // For further security
-    ;/*
+;/*
 
 [Database]
 host=127.0.0.1

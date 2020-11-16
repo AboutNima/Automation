@@ -3,6 +3,7 @@
 const ToolsType=[
 	'آلن','دریل','فرز (چرخ سنگ)','مته','حدیده و قلاویز','آچار','اره','پتک و چکش','چراغ قوه','متر','انبر','تیغ','آینه','گیره','جعبه یا کیف','باتری','شارژر','پرچ','سوهان','سه نظام'
 ];
+const ApiKey='724094dd-f540-2244-c14c-6fee985ece04';
 
 // Set Date Default Time Zone
 date_default_timezone_set('Asia/Tehran');
@@ -15,7 +16,7 @@ $ini=parse_ini_file('config.ini.php',true,INI_SCANNER_TYPED);
 
 // Include Model File
 $model=[
-	'jDateTime','DataValidation/Validation','function','Upload'
+	'jDateTime','DataValidation/Validation','function','Upload','DigitalSkills/WebServicesConnection'
 ];
 
 if(!is_array($model)) $model=[$model];
@@ -51,6 +52,7 @@ foreach($urlPath as $item)
 		case 'title': $urlCrt[]='سرفصل ها';break;
 		case 'costIncome': $urlCrt[]='هزینه و درآمد';break;
 		case 'news': $urlCrt[]='اخبار';break;
+		case 'courses': $urlCrt[]='دوره های آموزشی';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -115,6 +117,51 @@ switch($urlPath[0])
 				case 'setting':
 					require_once 'app/controller/account/admin/setting.php';
 					break;
+				case 'manageAdmins':
+					require_once 'app/controller/account/admin/manageAdmins.php';
+					break;
+				case 'students':
+					if(!empty($id=(int)$urlPath[2]))
+					{
+						switch($urlPath[3])
+						{
+							case 'information':
+								require_once 'app/controller/account/admin/students/information.php';
+								break;
+							case 'history':
+								require_once 'app/controller/account/admin/students/history.php';
+								break;
+							default:
+								header('location:/404');
+								break;
+						}
+					}else require_once 'app/controller/account/admin/students/list.php';
+					break;
+				case 'courses':
+					if(!empty($id=(int)$urlPath[2]))
+					{
+						switch($urlPath[3])
+						{
+							case 'information':
+								require_once 'app/controller/account/admin/courses/information.php';
+								break;
+							default:
+								header('location:/404');
+								break;
+						}
+					}else require_once 'app/controller/account/admin/courses/list.php';
+					break;
+				case 'accounting':
+					switch($urlPath[2])
+					{
+						case 'title':
+							require_once 'app/controller/account/admin/accounting/title.php';
+							break;
+						case 'costIncome':
+							require_once 'app/controller/account/admin/accounting/costIncome.php';
+							break;
+					}
+					break;
 				case 'mechanizedScanning':
 					switch($urlPath[2])
 					{
@@ -156,24 +203,6 @@ switch($urlPath[0])
 							break;
 					}
 					break;
-				case 'students':
-					if(!empty($id=(int)$urlPath[2]))
-					{
-						switch($urlPath[3])
-						{
-							case 'information':
-								require_once 'app/controller/account/admin/students/information.php';
-								break;
-							case 'history':
-								require_once 'app/controller/account/admin/students/history.php';
-								break;
-							default:
-								header('location:/404');
-								break;
-						}
-					}
-					else require_once 'app/controller/account/admin/students/list.php';
-					break;
 				case 'consumingMaterials':
 					if(!empty($id=(int)$urlPath[2]))
 					{
@@ -186,8 +215,7 @@ switch($urlPath[0])
 								header('location:/404');
 								break;
 						}
-					}
-					else require_once 'app/controller/account/admin/consumingMaterials/list.php';
+					}else require_once 'app/controller/account/admin/consumingMaterials/list.php';
           break;
 				case 'manageAdmins':
 					require_once 'app/controller/account/admin/manageAdmins.php';
@@ -208,9 +236,7 @@ switch($urlPath[0])
 					break;
 			}
 
-		}else{
-			require_once 'app/controller/account/admin/login.php';
-		}
+		}else require_once 'app/controller/account/admin/login.php';
 		break;
 
 	// Page error

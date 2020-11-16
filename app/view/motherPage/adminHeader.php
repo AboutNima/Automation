@@ -136,6 +136,7 @@
 					<?php
 					endif;
 					?>
+                    <li><a href="/account/news"><i class="fa fa-newspaper"></i><p>اخبار</p></a></li>
                     <li class="title"> آموزشگاه </li>
                     <li><a href="/account/students/list"><i class="fa fa-users"></i><p>کارآموزان</p></a></li>
                     <li><a href="/account/courses/list"><i class="fa fa-chalkboard"></i><p> دوره های آموزشی </p></a></li>

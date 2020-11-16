@@ -51,6 +51,7 @@ foreach($urlPath as $item)
 		case 'accounting': $urlCrt[]='حسابداری';break;
 		case 'title': $urlCrt[]='سرفصل ها';break;
 		case 'costIncome': $urlCrt[]='هزینه و درآمد';break;
+		case 'news': $urlCrt[]='اخبار';break;
 		case 'courses': $urlCrt[]='دوره های آموزشی';break;
 		default: $urlCrt[]=$item;break;
 	}
@@ -214,9 +215,25 @@ switch($urlPath[0])
 								header('location:/404');
 								break;
 						}
-					}
-					else require_once 'app/controller/account/admin/consumingMaterials/list.php';
+					}else require_once 'app/controller/account/admin/consumingMaterials/list.php';
           break;
+				case 'manageAdmins':
+					require_once 'app/controller/account/admin/manageAdmins.php';
+					break;
+				case 'news':
+					require_once 'app/controller/account/admin/news.php';
+					break;
+				case 'accounting':
+					switch($urlPath[2])
+					{
+						case 'title':
+							require_once 'app/controller/account/admin/accounting/title.php';
+							break;
+						case 'costIncome':
+							require_once 'app/controller/account/admin/accounting/costIncome.php';
+							break;
+					}
+					break;
 			}
 
 		}else require_once 'app/controller/account/admin/login.php';

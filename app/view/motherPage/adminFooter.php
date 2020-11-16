@@ -43,7 +43,7 @@ if(@$tableExport):
             {
                 var options={
                     exclude: '.noExl',
-                    filename: Math.floor((Math.random() * 9999999) + 1000000)+'.'+fileName,
+                    filename: fileName,
                     exclude_img: img,
                     exclude_links: link,
                     exclude_inputs: inputs,

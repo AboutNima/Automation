@@ -138,6 +138,11 @@
 					?>
                     <li class="title"> آموزشگاه </li>
                     <li><a href="/account/students/list"><i class="fa fa-users"></i><p>کارآموزان</p></a></li>
+                    <li><a href="/account/courses/list"><i class="fa fa-chalkboard"></i><p> دوره های آموزشی </p></a></li>
+                    <li class="title"> حسابداری </li>
+                    <li><a href="/account/accounting/title/list"><i class="fa fa-list"></i><p> سرفصل ها </p></a></li>
+                    <li><a href="/account/accounting/costIncome/list"><i class="fa fa-list"></i><p> ثبت هزینه و درآمد </p></a></li>
+                    <li class="title"> دیگر موارد </li>
                     <li><a href="/account/consumingMaterials/list"><i class="fa fa-wrench"></i><p>مواد مصرفی</p></a></li>
                     <li>
                         <span><i class="fad fa-qrcode"></i><p> سیستم اسکن مکانیزه </p>
@@ -149,9 +154,6 @@
                             </div>
 						</span>
                     </li>
-                    <li class="title"> حسابداری </li>
-                    <li><a href="/account/accounting/title/list"><i class="fa fa-list"></i><p> سرفصل ها </p></a></li>
-                    <li><a href="/account/accounting/costIncome/list"><i class="fa fa-list"></i><p> ثبت هزینه و درآمد </p></a></li>
                 </ul>
             </div>
         </div>

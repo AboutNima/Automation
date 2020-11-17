@@ -53,6 +53,7 @@ foreach($urlPath as $item)
 		case 'costIncome': $urlCrt[]='هزینه و درآمد';break;
 		case 'news': $urlCrt[]='اخبار';break;
 		case 'courses': $urlCrt[]='دوره های آموزشی';break;
+		case 'certificates': $urlCrt[]='مجوزات';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -76,7 +77,7 @@ switch($urlPath[0])
 {
 	// Site
 	case '':
-		require_once 'public/soon/index.html';
+		require_once 'app/controller/motherPage/header.php';
 		break;
 
 	// Ajax
@@ -222,6 +223,9 @@ switch($urlPath[0])
 					break;
 				case 'news':
 					require_once 'app/controller/account/admin/news.php';
+					break;
+				case 'certificates':
+					require_once 'app/controller/account/admin/certificates.php';
 					break;
 				case 'accounting':
 					switch($urlPath[2])

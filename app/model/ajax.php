@@ -7,142 +7,816 @@ switch($urlPath[1])
 			case 'admin':
 				if(isset($_SESSION['Admin']))
 				{
-					switch($urlPath[3]){
-						case 'stayOnline':
-							$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
-								'onlineFrom'=>time()
-							],1);
-							echo $db->count;
-							break;
-						case 'chatroom':
+					switch($urlPath[3])
+					{
+						// Manage site
+						case 'news':
 							switch($urlPath[4]){
-								case 'getStatus':
-									$data=$db->where('id',['NOT IN'=>[$_SESSION['Admin']['id']]])->
-									orderBy('id','DESC')->objectBuilder()->get('Admin',null,[
-										'id','online',
-										"(SELECT COUNT(id) FROM ChatRoom WHERE receiverId={$_SESSION['Admin']['id']} AND senderId=Admin.id AND seen='0') as unread"
-									]);
-									foreach($data as &$item) $item->online=strtr($item->online,['0'=>'offline','1'=>'online','2'=>'away']);
-									die(json_encode($data));
-									break;
-								case 'getNotification':
-									$data=$db->where('receiverId',$_SESSION['Admin']['id'])->
-									where('notification','0')->
-									join('Admin','Admin.id=senderId')->
-									orderBy('ChatRoom.id','DESC')->
-									objectBuilder()->get('ChatRoom',null,[
-										'Admin.id','avatar','text','file','ChatRoom.id as cId'
-									]);
-									$id=[];
-									foreach($data as &$item){
-										$id[]=$item->cId;
-										$item->avatar=empty($item->avatar)?'public/construct/media/user.png':$item->avatar;
-										$item->text=preg_replace("#<br />#"," ",$item->text);
-									}
-									if(!empty($id)){
-										$db->where('id',$id,'IN')->update('ChatRoom',[
-											'notification'=>'1'
+								case 'add':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
+										$data=$_POST['data'];
+										$data['archiveDate']=convertToGregorian($data['archiveDate']);
+										$data['image']=isset($_FILES['file']) ? $_FILES['file'] : '';
+										if(!isset($data['keywords'])) $data['keywords']='';
+										$validation=new Validation($data,[
+											'title'=>['required[عنوان]','length[عنوان,حداکثر,255]:max,255'],
+											'link'=>['required[لینک]','length[لینک,حداکثر,255]:max,255'],
+											'description'=>'required[متن]',
+											'demo'=>['required[خلاصه]','length[خلاصه,حداکثر,255]:max,255'],
+											'keywords'=>'required[کلیدواژه ها]',
+											'archiveDate'=>['required[تاریخ آرشیو]','date[تاریخ آرشیو]'],
+											'image'=>['required[عکس]','upload[jpg.jpeg.png.tiff,512]:png.jpg.jpeg.tiff,512']
 										]);
-									}
-									die(json_encode($data));
-									break;
-								case 'loadChat':
-									if(isset($_POST['id'])){
-										$id=$_POST['id'];
-										$data=$db->where('id',$id)->objectBuilder()->getOne('Admin',[
-											'id','online','onlineFrom'
-										]);
-										if(!empty($data)){
-											$_SESSION['DATA']['Chatroom']=[
-												'ID'=>$id,
-												'Token'=>$data->Token=strtoupper(md5(randomText(10).$id))
-											];
-											$data->online=strtr($data->online,['0'=>'offline','1'=>'online','2'=>'away']);
-											if($data->online=='online') $data->onlineFrom='آنلاین';
-											elseif(empty($data->onlineFrom)) $data->onlineFrom='نامشخص';
-											else $data->onlineFrom=humanTiming($data->onlineFrom);
-											die(json_encode($data));
-										}
-									}
-									break;
-								case 'getChatroomReady':
-									if(isset($_POST['Token'])){
-										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
-										$id=$_SESSION['DATA']['Chatroom']['ID'];
-										$data=$db->where("(receiverId={$id} AND senderId={$_SESSION['Admin']['id']})")->
-										orWhere("(receiverId={$_SESSION['Admin']['id']} AND senderId={$id})")->orderBy('id','DESC')->
-										objectBuilder()->get('ChatRoom',75,[
-											'id','senderId','text','seen',
-											"UNIX_TIMESTAMP(createdAt) as createdAt"
-										]);
-										$data=array_reverse($data);
-										if(!empty($data)){
-											$db->where('receiverId',$_SESSION['Admin']['id'])->update('ChatRoom',[
-												'seen'=>'1','notification'=>'1'
-											]);
-											foreach($data as &$item){
-												$item->sender=$item->senderId==$_SESSION['Admin']['id']?true:false;
-												unset($item->senderId);
-												$item->humanTiming=date('h:iA',$item->createdAt);
-											}
-											unset($item);
-											die(json_encode($data));
-										}
-									}
-									break;
-								case 'sendMessage':
-									if(isset($_POST['text'])&&isset($_POST['Token'])){
-										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
-										$id=$_SESSION['DATA']['Chatroom']['ID'];
-										if(empty(trim($_POST['text']))) return false;
-										$text=nl2br($_POST['text']);
-										$id=$db->insert('ChatRoom',[
-											'receiverId'=>$id,
-											'senderId'=>$_SESSION['Admin']['id'],
-											'text'=>$text,
-										]);
-										if(!empty($id)){
+										if($validation->getStatus())
+										{
 											die(json_encode([
-												'id'=>$id,
-												'text'=>$text,
-												'seen'=>0,
-												'humanTiming'=>date('h:iA',$time=time()),
-												'createdAt'=>$time
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$upload=new \Verot\Upload\Upload($data['image']);
+										if($upload->uploaded)
+										{
+											$upload->file_new_name_body=sha1(randomCode(10));
+											$upload->image_resize=true;
+											$upload->image_x=800;
+											$upload->image_y=600;
+											$upload->process('public/home/media/news');
+											if($upload->processed) $data['image']=str_replace('\\','/',$upload->file_dst_pathname);
+										}
+										$data['keywords']=json_encode($data['keywords']);
+										$id=$db->insert('News',$data);
+										if((bool)$id)
+										{
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'خبر با موفقیت ثبت شد.',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											unlink($data['image']);
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این لینک قبلا ثبت شده است.',
+													'err'=>0,
+													'data'=>null
+												]));
+											}
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
 											]));
 										}
 									}
 									break;
-								case 'getNewMessage':
-									if(isset($_POST['Token'])){
-										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
-										$id=$_SESSION['DATA']['Chatroom']['ID'];
-										$data=$db->where('senderId',$id)->
-										where('receiverId',$_SESSION['Admin']['id'])->
-										where('seen','0')->
-										orderBy('id','ASC')->
-										objectBuilder()->get('ChatRoom',null,[
-											'id','text',"UNIX_TIMESTAMP(createdAt) as createdAt"
+								case 'getData':
+									if(isset($_POST['id'])){
+										$_SESSION['DATA']['News']['ID']=$_POST['id'];
+										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('News',[
+											'id', 'title', 'link', 'description', 'demo', 'keywords', 'archiveDate'
 										]);
-										if(!empty($data)){
-											$db->where('receiverId',$_SESSION['Admin']['id'])->
-											update('ChatRoom',['seen'=>'1']);
-											foreach($data as &$item) $item->humanTiming=date('h:iA',$item->createdAt);
-											unset($item);
-											die(json_encode($data));
+									}
+									break;
+								case 'edit':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['News']['ID']))
+									{
+										$data=$_POST['data'];
+										$data['archiveDate']=convertToGregorian($data['archiveDate']);
+										$data['image']=isset($_FILES['file'])?$_FILES['file']:'';
+										if(!isset($data['keywords'])) $data['keywords']='';
+										$validation=new Validation($data,[
+											'title'=>['required[عنوان]','length[عنوان,حداکثر,255]:max,255'],
+											'link'=>['required[لینک]','length[لینک,حداکثر,255]:max,255'],
+											'description'=>'required[متن]',
+											'demo'=>['required[خلاصه]','length[خلاصه,حداکثر,255]:max,255'],
+											'keywords'=>'required[کلیدواژه ها]',
+											'archiveDate'=>['required[تاریخ آرشیو]','date[تاریخ آرشیو]'],
+											'image'=>'upload[jpg.jpeg.png.tiff,512]:png.jpg.jpeg.tiff,512'
+										]);
+										if($validation->getStatus())
+										{
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$data['keywords']=json_encode($data['keywords']);
+										if(!empty($data['image']))
+										{
+											$lastImage=$db->where('id',$_SESSION['DATA']['News']['ID'])->getOne('News','image')['image'];
+											$upload=new \Verot\Upload\Upload($data['image']);
+											if($upload->uploaded)
+											{
+												$upload->file_new_name_body=sha1(randomCode(10));
+												$upload->image_resize=true;
+												$upload->image_x=800;
+												$upload->image_y=600;
+												$upload->process('public/home/media/news');
+												if($upload->processed) $data['image']=str_replace('\\','/',$upload->file_dst_pathname);
+											}
+										}else{
+											unset($data['image']);
+										}
+										$check=$db->where('id',$_SESSION['DATA']['News']['ID'])->update('News',$data);
+										if($check)
+										{
+											if(!empty($data['image'])) unlink($lastImage);
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'خبر با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-1,
+												'data'=>null
+											]));
 										}
 									}
 									break;
-								case 'checkSeen':
-									if(isset($_POST['data'])&&isset($_POST['Token'])){
-										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
-										$id=$_SESSION['DATA']['Chatroom']['ID'];
+								case 'delete':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['id'])){
+										$lastImage=$db->where('id',$_POST['id'])->getOne('News',['image'])['image'];
+										$check=$db->where('id',$_POST['id'])->delete('News',null);
+										if($check){
+											unlink($lastImage);
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'خبر با موفقیت حذف شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این لینک قبلا ثبت شده است.',
+													'err'=>0,
+													'data'=>null
+												]));
+											}
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+							}
+							break;
+						case 'certificates':
+							switch($urlPath[4])
+							{
+								case 'add':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']))
+									{
 										$data=$_POST['data'];
-										$data=$db->where('id',$data,'IN')->
-										where('senderId',$_SESSION['Admin']['id'])->
-										where('receiverId',$id)->
-										where('seen','1')->get('ChatRoom',null,'id');
-										$data=array_column($data,'id');
-										die(json_encode($data));
+										$data['photo']=isset($_FILES['photo']) ? $_FILES['photo'] : '';
+										$validation=new Validation($data,[
+											'title'=>['required[عنوان]'],
+											'description'=>['required[توضیحات]','length[توضیحات,حداکثر,150]:max,175'],
+											'photo'=>['required[عکس مجوز]','upload[jpg.jpeg,256]:jpg.jpeg,256'],
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$upload=new \Verot\Upload\Upload($data['photo']);
+										if($upload->uploaded)
+										{
+											$upload->file_new_name_body=sha1(randomCode(10));
+											$upload->image_resize=true;
+											$upload->image_x=250;
+											$upload->image_y=250;
+											$upload->process('public/home/media/certificates');
+											if($upload->processed) $data['photo']=str_replace('\\','/',$upload->file_dst_pathname);
+										}
+										$id=$db->insert('Certificates',$data);
+										if((bool)$id)
+										{
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مجوز با موفقیت اضافه شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											unlink($data['photo']);
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().' را اعلام نمایید)',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+								case 'getData':
+									if(isset($_POST['id']))
+									{
+										$id=$_POST['id'];
+										$data=$db->where('id',$id)->
+										getOne('Certificates',[
+											'title','description','photo'
+										]);
+										if(!empty($data))
+										{
+											$_SESSION['DATA']['Certificates']=[
+												'ID'=>$id,
+												'PHOTO'=>$data['photo']
+											];
+											echo json_encode($data);
+										}
+									}
+									break;
+								case 'edit':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['Certificates']['ID']))
+									{
+										$id=$_SESSION['DATA']['Certificates']['ID'];
+										$data=$_POST['data'];
+										$data['photo']=isset($_FILES['photo']) ? $_FILES['photo'] : '';
+										$validation=new Validation($data,[
+											'title'=>['required[عنوان]'],
+											'description'=>['required[توضیحات]','length[توضیحات,حداکثر,150]:max,175'],
+											'photo'=>['upload[jpg.jpeg.tiff,256]:png.jpg.jpeg,256'],
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(!empty($data['photo']))
+										{
+											$upload=new \Verot\Upload\Upload($data['photo']);
+											if($upload->uploaded)
+											{
+												$upload->file_new_name_body=sha1(randomCode(10));
+												$upload->image_resize=true;
+												$upload->image_x=250;
+												$upload->image_y=250;
+												$upload->process('public/home/media/certificates');
+												if($upload->processed) $data['photo']=str_replace('\\','/',$upload->file_dst_pathname);
+											}
+										}else unset($data['photo']);
+										$check=$db->where('id',$id)->
+										update('Certificates',$data,1);
+										if((bool)$check)
+										{
+											if(isset($data['photo'])) unlink($_SESSION['DATA']['Certificates']['PHOTO']);
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مجوز با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().' را اعلام نمایید)',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+							}
+							break;
+
+						// Academy
+						case 'students':
+							switch($urlPath[4]){
+								case 'add':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
+										$data=$_POST['data'];
+										@$data['birthDay']=convertToGregorian($data['birthDay']);
+										$validation=new Validation($data,[
+											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+											'name_en'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
+											'surname_en'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
+											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
+											'nationalCode'=>['required[کد ملی]','NationalCode'],
+											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
+											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
+											'homeNumber'=>'HomeNumber',
+											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
+											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
+											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
+											'job'=>'length[شغل,حداکثر,75]:max,75'
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(empty($data['homeNumber'])) $data['homeNumber']=null;
+										if(empty($data['job'])) $data['job']=null;
+										$data['QRCode']=randomText(25);
+										$id=$db->insert('Students',$data);
+										if((bool)$id){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'کارآموز جدید با موفقیت ثبت شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+								case 'getData':
+									if(isset($_POST['id'])){
+										$_SESSION['DATA']['Students']['EDIT']['ID']=$_POST['id'];
+										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Students',[
+											'name','surname','name_en','surname_en','fatherName','nationalCode',
+											'birthCNumber','phoneNumber','homeNumber','birthDay','education','address','job'
+										]);
+									}
+									break;
+								case 'edit':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])&&isset($_SESSION['DATA']['Students']['EDIT']['ID'])){
+										$data=$_POST['data'];
+										@$data['birthDay']=convertToGregorian($data['birthDay']);
+										$validation=new Validation($data,[
+											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
+											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
+											'name_en'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
+											'surname_en'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
+											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
+											'nationalCode'=>['required[کد ملی]','NationalCode'],
+											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
+											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
+											'homeNumber'=>'HomeNumber',
+											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
+											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
+											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
+											'job'=>'length[شقل,حداکثر,75]:max,75'
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$check=$db->where('id',$_SESSION['DATA']['Students']['EDIT']['ID'])->
+										update('Students',$data,1);
+										if($check){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'کارآموز با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+							}
+							break;
+
+						// Accounting
+						case 'accounting':
+							switch($urlPath[4])
+							{
+								case 'title':
+									switch($urlPath[5])
+									{
+										case 'add':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$id=$db->insert('ACCTitles',$data);
+												if((bool)$id){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'سرفصل جدید با موفقیت ایجاد شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'getData':
+											if(isset($_POST['id'])){
+												$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCTitles',[
+													'title'
+												]);
+											}
+											break;
+										case 'edit':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']))
+											{
+												$data=$_POST['data'];
+												$validation=new Validation($data,[
+													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$check=$db->where('id',$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID'])->
+												update('ACCTitles',$data,1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'سرفصل با موفقیت ویرایش شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+									}
+									break;
+								case 'costIncome':
+									switch($urlPath[5])
+									{
+										case 'add':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']))
+											{
+												$data=$_POST['data'];
+												$data['price']=str_replace(',','',$data['price']);
+												$validation=new Validation($data,[
+													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
+													'titleId'=>[
+														'required[سرفصل]',
+														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
+													],
+													'price'=>['required[مبلغ]','numeric[مبلغ]'],
+													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
+													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$id=$db->insert('ACCCostIncome',$data);
+												if((bool)$id){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'مورد جدید با موفقیت ثبت شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'getData':
+											if(isset($_POST['id'])){
+												$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']=$_POST['id'];
+												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCCostIncome',[
+													'titleId','subject','price','income','description'
+												]);
+											}
+											break;
+										case 'edit':
+											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']))
+											{
+												$data=$_POST['data'];
+												$data['price']=str_replace(',','',$data['price']);
+												$validation=new Validation($data,[
+													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
+													'titleId'=>[
+														'required[سرفصل]',
+														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
+													],
+													'price'=>['required[مبلغ]','numeric[مبلغ]'],
+													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
+													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
+												]);
+												if($validation->getStatus()){
+													die(json_encode([
+														'type'=>'danger',
+														'msg'=>$validation->getErrors(),
+														'err'=>-1,
+														'data'=>null
+													]));
+												}
+												$check=$db->where('id',$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID'])->
+												update('ACCCostIncome',$data,1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'درخواست شما با موفقیت انجام شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+										case 'remove':
+											if(isset($_POST['id'])){
+												$check=$db->where('id',$_POST['id'])->delete('ACCCostIncome',1);
+												if($check){
+													die(json_encode([
+														'type'=>'success',
+														'msg'=>'درخواست شما با موفقیت انجام شد',
+														'err'=>null,
+														'data'=>null
+													]));
+												}else{
+													die(json_encode([
+														'type'=>'warning',
+														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+														'err'=>-2,
+														'data'=>null
+													]));
+												}
+											}
+											break;
+									}
+									break;
+							}
+							break;
+
+						// Other
+						case 'consumingMaterials':
+							switch($urlPath[4]){
+								case 'add':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data'])){
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
+											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
+											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
+											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
+											'count'=>['required[تعداد]','numeric[تعداد]'],
+											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										if(empty($data['company'])) $data['company']=null;
+										if(empty($data['description'])) $data['description']=null;
+										$id=$db->insert('CMaterials',$data);
+										if((bool)$id){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد جدید با موفقیت ثبت شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+													'err'=>0,
+													'data'=>null
+												]));
+											}else{
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
+										}
+									}
+									break;
+								case 'getData':
+									if(isset($_POST['id'])){
+										$_SESSION['DATA']['CMaterials']['EDIT']['ID']=$_POST['id'];
+										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('CMaterials',[
+											'id','title','propertyNumber','company','unit','count','description',
+											'(SELECT SUM(changeRate) FROM CMHistory WHERE changeRate<0 AND CMId='.$_POST['id'].') as countUsed'
+										]);
+									}
+									break;
+								case 'edit':
+									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
+										$data=$_POST['data'];
+										$validation=new Validation($data,[
+											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
+											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
+											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
+											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
+											'count'=>['required[تعداد]','numeric[تعداد]'],
+											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+										]);
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
+										update('CMaterials',$data,1);
+										if($check){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد با موفقیت ویرایش شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											if($db->getLastErrno()==1062){
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
+													'err'=>0,
+													'data'=>null
+												]));
+											}else{
+												die(json_encode([
+													'type'=>'warning',
+													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+													'err'=>-2,
+													'data'=>null
+												]));
+											}
+										}
+									}
+									break;
+								case 'delete':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['id'])){
+										$check=$db->where('id',$_POST['id'])->delete('CMaterials',null);
+										if($check){
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'مواد با موفقیت حذف شد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
+									}
+									break;
+								case 'changeRate':
+									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
+									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID']))
+									{
+										$data=$_POST['data'];
+										$studentId=$data['studentId'];
+										$description=$data['description'];
+										if($data['type']=='0'){
+											$changeRate=$data['changeRate'];
+											$validation=new Validation($data,[
+												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','min[میزان تغییرات,1]:1'],
+												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
+												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
+												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+											]);
+										}else{
+											$changeRate=-1*$data['changeRate'];
+											$validation=new Validation($data,[
+												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
+												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','max[میزان تغییرات,موجودی]:'.$data['count']],
+												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
+												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
+												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
+											]);
+										}
+										if($validation->getStatus()){
+											die(json_encode([
+												'type'=>'danger',
+												'msg'=>$validation->getErrors(),
+												'err'=>-1,
+												'data'=>null
+											]));
+										}
+										$data=$data['type']=='0' ? ['count'=>$data['count']+$data['changeRate']] : ['count'=>$data['count']-$data['changeRate']];
+										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
+										update('CMaterials',$data,1);
+										if($check){
+											$data=[
+												'CMId'=>$_SESSION['DATA']['CMaterials']['EDIT']['ID'],
+												'changeRate'=>$changeRate,
+												'studentId'=>$studentId,
+												'description'=>$description
+											];
+											$check=$db->insert('CMHistory',$data);
+											die(json_encode([
+												'type'=>'success',
+												'msg'=>'موجودی با موفقیت تغییر کرد',
+												'err'=>null,
+												'data'=>null
+											]));
+										}else{
+											die(json_encode([
+												'type'=>'warning',
+												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
+												'err'=>-2,
+												'data'=>null
+											]));
+										}
 									}
 									break;
 							}
@@ -683,112 +1357,144 @@ switch($urlPath[1])
 									break;
 							}
 							break;
-						case 'students':
-							switch($urlPath[4]){
-								case 'add':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data'])){
-										$data=$_POST['data'];
-										@$data['birthDay']=convertToGregorian($data['birthDay']);
-										$validation=new Validation($data,[
-											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
-											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
-											'name_en'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
-											'surname_en'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
-											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
-											'nationalCode'=>['required[کد ملی]','NationalCode'],
-											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
-											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-											'homeNumber'=>'HomeNumber',
-											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
-											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
-											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
-											'job'=>'length[شغل,حداکثر,75]:max,75'
-										]);
-										if($validation->getStatus()){
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										if(empty($data['homeNumber'])) $data['homeNumber']=null;
-										if(empty($data['job'])) $data['job']=null;
-										$data['QRCode']=randomText(25);
-										$id=$db->insert('Students',$data);
-										if((bool)$id){
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'کارآموز جدید با موفقیت ثبت شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-								case 'getData':
-									if(isset($_POST['id'])){
-										$_SESSION['DATA']['Students']['EDIT']['ID']=$_POST['id'];
-										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('Students',[
-											'name','surname','name_en','surname_en','fatherName','nationalCode',
-											'birthCNumber','phoneNumber','homeNumber','birthDay','education','address','job'
-										]);
-									}
-									break;
-								case 'edit':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data'])&&isset($_SESSION['DATA']['Students']['EDIT']['ID'])){
-										$data=$_POST['data'];
-										@$data['birthDay']=convertToGregorian($data['birthDay']);
-										$validation=new Validation($data,[
-											'name'=>['required[نام]','length[نام,حداکثر,70]:max,70'],
-											'surname'=>['required[نام خانوادگی]','length[نام خانوادگی,حداکثر,70]:max,70'],
-											'name_en'=>['required[نام (انگلیسی)]','length[نام (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام (انگلیسی)]'],
-											'surname_en'=>['required[نام خانوادگی (انگلیسی)]','length[نام خانوادگی (انگلیسی),حداکثر,70]:max,70','EnglishCharacters[نام خانوادگی (انگلیسی)]'],
-											'fatherName'=>['required[نام پدر]','length[نام پدر,حداکثر,70]:max,70'],
-											'nationalCode'=>['required[کد ملی]','NationalCode'],
-											'birthCNumber'=>['required[شماره شناسنامه]','Numeric[شماره شناسنامه]','length[شماره شناسنامه,حداکثر,10]:max,10'],
-											'phoneNumber'=>['required[شماره همراه]','PhoneNumber'],
-											'homeNumber'=>'HomeNumber',
-											'birthDay'=>['required[تاریخ تولد]','date[تاریخ تولد]'],
-											'education'=>['required[میزان تحصیلات]','in[انتخاب,میزان تحصیلات]:0,1,2,3,4,5,6'],
-											'address'=>['required[آدرس]','length[آدرس,حداکثر,250]:max,250'],
-											'job'=>'length[شقل,حداکثر,75]:max,75'
-										]);
-										if($validation->getStatus()){
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										$check=$db->where('id',$_SESSION['DATA']['Students']['EDIT']['ID'])->
-										update('Students',$data,1);
-										if($check){
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'کارآموز با موفقیت ویرایش شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
 
+						// Setting and chatroom
+						case 'stayOnline':
+							$db->where('id',$_SESSION['Admin']['id'])->update('Admin',[
+								'onlineFrom'=>time()
+							],1);
+							echo $db->count;
+							break;
+						case 'chatroom':
+							switch($urlPath[4])
+							{
+								case 'getStatus':
+									$data=$db->where('id',['NOT IN'=>[$_SESSION['Admin']['id']]])->
+									orderBy('id','DESC')->objectBuilder()->get('Admin',null,[
+										'id','online',
+										"(SELECT COUNT(id) FROM ChatRoom WHERE receiverId={$_SESSION['Admin']['id']} AND senderId=Admin.id AND seen='0') as unread"
+									]);
+									foreach($data as &$item) $item->online=strtr($item->online,['0'=>'offline','1'=>'online','2'=>'away']);
+									die(json_encode($data));
+									break;
+								case 'getNotification':
+									$data=$db->where('receiverId',$_SESSION['Admin']['id'])->
+									where('notification','0')->
+									join('Admin','Admin.id=senderId')->
+									orderBy('ChatRoom.id','DESC')->
+									objectBuilder()->get('ChatRoom',null,[
+										'Admin.id','avatar','text','file','ChatRoom.id as cId'
+									]);
+									$id=[];
+									foreach($data as &$item){
+										$id[]=$item->cId;
+										$item->avatar=empty($item->avatar)?'public/construct/media/user.png':$item->avatar;
+										$item->text=preg_replace("#<br />#"," ",$item->text);
+									}
+									if(!empty($id)){
+										$db->where('id',$id,'IN')->update('ChatRoom',[
+											'notification'=>'1'
+										]);
+									}
+									die(json_encode($data));
+									break;
+								case 'loadChat':
+									if(isset($_POST['id'])){
+										$id=$_POST['id'];
+										$data=$db->where('id',$id)->objectBuilder()->getOne('Admin',[
+											'id','online','onlineFrom'
+										]);
+										if(!empty($data)){
+											$_SESSION['DATA']['Chatroom']=[
+												'ID'=>$id,
+												'Token'=>$data->Token=strtoupper(md5(randomText(10).$id))
+											];
+											$data->online=strtr($data->online,['0'=>'offline','1'=>'online','2'=>'away']);
+											if($data->online=='online') $data->onlineFrom='آنلاین';
+											elseif(empty($data->onlineFrom)) $data->onlineFrom='نامشخص';
+											else $data->onlineFrom=humanTiming($data->onlineFrom);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'getChatroomReady':
+									if(isset($_POST['Token'])){
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$db->where("(receiverId={$id} AND senderId={$_SESSION['Admin']['id']})")->
+										orWhere("(receiverId={$_SESSION['Admin']['id']} AND senderId={$id})")->orderBy('id','DESC')->
+										objectBuilder()->get('ChatRoom',75,[
+											'id','senderId','text','seen',
+											"UNIX_TIMESTAMP(createdAt) as createdAt"
+										]);
+										$data=array_reverse($data);
+										if(!empty($data)){
+											$db->where('receiverId',$_SESSION['Admin']['id'])->update('ChatRoom',[
+												'seen'=>'1','notification'=>'1'
+											]);
+											foreach($data as &$item){
+												$item->sender=$item->senderId==$_SESSION['Admin']['id']?true:false;
+												unset($item->senderId);
+												$item->humanTiming=date('h:iA',$item->createdAt);
+											}
+											unset($item);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'sendMessage':
+									if(isset($_POST['text'])&&isset($_POST['Token'])){
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										if(empty(trim($_POST['text']))) return false;
+										$text=nl2br($_POST['text']);
+										$id=$db->insert('ChatRoom',[
+											'receiverId'=>$id,
+											'senderId'=>$_SESSION['Admin']['id'],
+											'text'=>$text,
+										]);
+										if(!empty($id)){
 											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
+												'id'=>$id,
+												'text'=>$text,
+												'seen'=>0,
+												'humanTiming'=>date('h:iA',$time=time()),
+												'createdAt'=>$time
 											]));
 										}
+									}
+									break;
+								case 'getNewMessage':
+									if(isset($_POST['Token'])){
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$db->where('senderId',$id)->
+										where('receiverId',$_SESSION['Admin']['id'])->
+										where('seen','0')->
+										orderBy('id','ASC')->
+										objectBuilder()->get('ChatRoom',null,[
+											'id','text',"UNIX_TIMESTAMP(createdAt) as createdAt"
+										]);
+										if(!empty($data)){
+											$db->where('receiverId',$_SESSION['Admin']['id'])->
+											update('ChatRoom',['seen'=>'1']);
+											foreach($data as &$item) $item->humanTiming=date('h:iA',$item->createdAt);
+											unset($item);
+											die(json_encode($data));
+										}
+									}
+									break;
+								case 'checkSeen':
+									if(isset($_POST['data'])&&isset($_POST['Token'])){
+										if($_POST['Token']!==$_SESSION['DATA']['Chatroom']['Token']) die(false);
+										$id=$_SESSION['DATA']['Chatroom']['ID'];
+										$data=$_POST['data'];
+										$data=$db->where('id',$data,'IN')->
+										where('senderId',$_SESSION['Admin']['id'])->
+										where('receiverId',$id)->
+										where('seen','1')->get('ChatRoom',null,'id');
+										$data=array_column($data,'id');
+										die(json_encode($data));
 									}
 									break;
 							}
@@ -897,575 +1603,7 @@ switch($urlPath[1])
 									break;
 							}
 							break;
-						case 'consumingMaterials':
-							switch($urlPath[4]){
-								case 'add':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data'])){
-										$data=$_POST['data'];
-										$validation=new Validation($data,[
-											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
-											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
-											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
-											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
-											'count'=>['required[تعداد]','numeric[تعداد]'],
-											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
-										]);
-										if($validation->getStatus()){
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										if(empty($data['company'])) $data['company']=null;
-										if(empty($data['description'])) $data['description']=null;
-										$id=$db->insert('CMaterials',$data);
-										if((bool)$id){
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'مواد جدید با موفقیت ثبت شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											if($db->getLastErrno()==1062){
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
-													'err'=>0,
-													'data'=>null
-												]));
-											}else{
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-													'err'=>-2,
-													'data'=>null
-												]));
-											}
-										}
-									}
-									break;
-								case 'getData':
-									if(isset($_POST['id'])){
-										$_SESSION['DATA']['CMaterials']['EDIT']['ID']=$_POST['id'];
-										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('CMaterials',[
-											'id','title','propertyNumber','company','unit','count','description',
-											'(SELECT SUM(changeRate) FROM CMHistory WHERE changeRate<0 AND CMId='.$_POST['id'].') as countUsed'
-										]);
-									}
-									break;
-								case 'edit':
-									if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID'])){
-										$data=$_POST['data'];
-										$validation=new Validation($data,[
-											'title'=>['required[نام]','length[نام,حداکثر,100]:max,100'],
-											'company'=>'length[شرکت سازنده,حداکثر,100]:max,100',
-											'propertyNumber'=>['required[شماره اموال]','max[شماره اموال,9999]:9999','min[شماره اموال,1]:1'],
-											'unit'=>['required[واحد شمارش]','in[انتخاب,واحد شمارش]:0,1,2,3'],
-											'count'=>['required[تعداد]','numeric[تعداد]'],
-											'description'=>['length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
-										]);
-										if($validation->getStatus()){
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
-										update('CMaterials',$data,1);
-										if($check){
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'مواد با موفقیت ویرایش شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											if($db->getLastErrno()==1062){
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'این شماره اموال قبلا در سیستم ثبت شده',
-													'err'=>0,
-													'data'=>null
-												]));
-											}else{
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-													'err'=>-2,
-													'data'=>null
-												]));
-											}
-										}
-									}
-									break;
-								case 'delete':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['id'])){
-										$check=$db->where('id',$_POST['id'])->delete('CMaterials',null);
-										if($check){
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'مواد با موفقیت حذف شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
 
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-								case 'changeRate':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']) && isset($_SESSION['DATA']['CMaterials']['EDIT']['ID']))
-									{
-										$data=$_POST['data'];
-										$studentId=$data['studentId'];
-										$description=$data['description'];
-										if($data['type']=='0'){
-											$changeRate=$data['changeRate'];
-											$validation=new Validation($data,[
-												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
-												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','min[میزان تغییرات,1]:1'],
-												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
-												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
-												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
-											]);
-										}else{
-											$changeRate=-1*$data['changeRate'];
-											$validation=new Validation($data,[
-												'type'=>['required[نوع تغییرات]','in[انتخاب,میزان تغییرات]:0,1'],
-												'changeRate'=>['required[میزان تغییرات]','numeric[میزان تغییرات]','max[میزان تغییرات,موجودی]:'.$data['count']],
-												'count'=>['required[موجودی فعلی]','numeric[موجودی فعلی]'],
-												'studentId'=>['required[تغییر موجودی توسط]','in[انتخاب,تغیر موجودی توسط]:0,'.implode(',',$_SESSION['DATA']['CMaterials']['ChangeRate']['ID'])],
-												'description'=>['required[توضیحات]','length[حداکثر,توضیحات,100]:max,100','length[حداقل,توضیحات,10]:min,10']
-											]);
-										}
-										if($validation->getStatus()){
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										$data=$data['type']=='0' ? ['count'=>$data['count']+$data['changeRate']] : ['count'=>$data['count']-$data['changeRate']];
-										$check=$db->where('id',$_SESSION['DATA']['CMaterials']['EDIT']['ID'])->
-										update('CMaterials',$data,1);
-										if($check){
-											$data=[
-												'CMId'=>$_SESSION['DATA']['CMaterials']['EDIT']['ID'],
-												'changeRate'=>$changeRate,
-												'studentId'=>$studentId,
-												'description'=>$description
-											];
-											$check=$db->insert('CMHistory',$data);
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'موجودی با موفقیت تغییر کرد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-							}
-							break;
-						case 'news':
-							switch($urlPath[4]){
-								case 'add':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']))
-									{
-										$data=$_POST['data'];
-										$data['archiveDate']=convertToGregorian($data['archiveDate']);
-										$data['image']=isset($_FILES['file']) ? $_FILES['file'] : '';
-										if(!isset($data['keywords'])) $data['keywords']='';
-										$validation=new Validation($data,[
-											'title'=>['required[عنوان]','length[عنوان,حداکثر,255]:max,255'],
-											'link'=>['required[لینک]','length[لینک,حداکثر,255]:max,255'],
-											'description'=>'required[متن]',
-											'demo'=>['required[خلاصه]','length[خلاصه,حداکثر,255]:max,255'],
-											'keywords'=>'required[کلیدواژه ها]',
-											'archiveDate'=>['required[تاریخ آرشیو]','date[تاریخ آرشیو]'],
-											'image'=>['required[عکس]','upload[jpg.jpeg.png.tiff,512]:png.jpg.jpeg.tiff,512']
-										]);
-										if($validation->getStatus())
-										{
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										$upload=new \Verot\Upload\Upload($data['image']);
-										if($upload->uploaded)
-										{
-											$upload->file_new_name_body=sha1(randomCode(10));
-											$upload->image_resize=true;
-											$upload->image_x=800;
-											$upload->image_y=600;
-											$upload->process('public/home/media/news');
-											if($upload->processed) $data['image']=str_replace('\\','/',$upload->file_dst_pathname);
-										}
-										$data['keywords']=json_encode($data['keywords']);
-										$id=$db->insert('News',$data);
-										if((bool)$id)
-										{
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'خبر با موفقیت ثبت شد.',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											unlink($data['image']);
-											if($db->getLastErrno()==1062){
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'این لینک قبلا ثبت شده است.',
-													'err'=>0,
-													'data'=>null
-												]));
-											}
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-								case 'getData':
-									if(isset($_POST['id'])){
-										$_SESSION['DATA']['News']['ID']=$_POST['id'];
-										echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('News',[
-											'id', 'title', 'link', 'description', 'demo', 'keywords', 'archiveDate'
-										]);
-									}
-									break;
-								case 'edit':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['data']) && isset($_SESSION['DATA']['News']['ID']))
-									{
-										$data=$_POST['data'];
-										$data['archiveDate']=convertToGregorian($data['archiveDate']);
-										$data['image']=isset($_FILES['file'])?$_FILES['file']:'';
-										if(!isset($data['keywords'])) $data['keywords']='';
-										$validation=new Validation($data,[
-											'title'=>['required[عنوان]','length[عنوان,حداکثر,255]:max,255'],
-											'link'=>['required[لینک]','length[لینک,حداکثر,255]:max,255'],
-											'description'=>'required[متن]',
-											'demo'=>['required[خلاصه]','length[خلاصه,حداکثر,255]:max,255'],
-											'keywords'=>'required[کلیدواژه ها]',
-											'archiveDate'=>['required[تاریخ آرشیو]','date[تاریخ آرشیو]'],
-											'image'=>'upload[jpg.jpeg.png.tiff,512]:png.jpg.jpeg.tiff,512'
-										]);
-										if($validation->getStatus())
-										{
-											die(json_encode([
-												'type'=>'danger',
-												'msg'=>$validation->getErrors(),
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-										$data['keywords']=json_encode($data['keywords']);
-										if(!empty($data['image']))
-										{
-											$lastImage=$db->where('id',$_SESSION['DATA']['News']['ID'])->getOne('News','image')['image'];
-											$upload=new \Verot\Upload\Upload($data['image']);
-											if($upload->uploaded)
-											{
-												$upload->file_new_name_body=sha1(randomCode(10));
-												$upload->image_resize=true;
-												$upload->image_x=800;
-												$upload->image_y=600;
-												$upload->process('public/home/media/news');
-												if($upload->processed) $data['image']=str_replace('\\','/',$upload->file_dst_pathname);
-											}
-										}else{
-											unset($data['image']);
-										}
-										$check=$db->where('id',$_SESSION['DATA']['News']['ID'])->update('News',$data);
-										if($check)
-										{
-											if(!empty($data['image'])) unlink($lastImage);
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'خبر با موفقیت ویرایش شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-1,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-								case 'delete':
-									if(!isset($_POST['Token']) || $_POST['Token']!=$_SESSION['Token']) die();
-									if(isset($_POST['id'])){
-										$lastImage=$db->where('id',$_POST['id'])->getOne('News',['image'])['image'];
-										$check=$db->where('id',$_POST['id'])->delete('News',null);
-										if($check){
-											unlink($lastImage);
-											die(json_encode([
-												'type'=>'success',
-												'msg'=>'خبر با موفقیت حذف شد',
-												'err'=>null,
-												'data'=>null
-											]));
-										}else{
-											if($db->getLastErrno()==1062){
-												die(json_encode([
-													'type'=>'warning',
-													'msg'=>'این لینک قبلا ثبت شده است.',
-													'err'=>0,
-													'data'=>null
-												]));
-											}
-											die(json_encode([
-												'type'=>'warning',
-												'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-												'err'=>-2,
-												'data'=>null
-											]));
-										}
-									}
-									break;
-							}
-							break;
-						case 'accounting':
-							switch($urlPath[4])
-							{
-								case 'title':
-									switch($urlPath[5])
-									{
-										case 'add':
-											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']))
-											{
-												$data=$_POST['data'];
-												$validation=new Validation($data,[
-													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
-												]);
-												if($validation->getStatus()){
-													die(json_encode([
-														'type'=>'danger',
-														'msg'=>$validation->getErrors(),
-														'err'=>-1,
-														'data'=>null
-													]));
-												}
-												$id=$db->insert('ACCTitles',$data);
-												if((bool)$id){
-													die(json_encode([
-														'type'=>'success',
-														'msg'=>'سرفصل جدید با موفقیت ایجاد شد',
-														'err'=>null,
-														'data'=>null
-													]));
-												}else{
-													die(json_encode([
-														'type'=>'warning',
-														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-														'err'=>-2,
-														'data'=>null
-													]));
-												}
-											}
-											break;
-										case 'getData':
-											if(isset($_POST['id'])){
-												$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']=$_POST['id'];
-												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCTitles',[
-													'title'
-												]);
-											}
-											break;
-										case 'edit':
-											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['Title']['EDIT']['ID']))
-											{
-												$data=$_POST['data'];
-												$validation=new Validation($data,[
-													'title'=>['required[عنوان]','length[عنوان,حداکثر,100]:max,100'],
-												]);
-												if($validation->getStatus()){
-													die(json_encode([
-														'type'=>'danger',
-														'msg'=>$validation->getErrors(),
-														'err'=>-1,
-														'data'=>null
-													]));
-												}
-												$check=$db->where('id',$_SESSION['DATA']['Accounting']['Title']['EDIT']['ID'])->
-												update('ACCTitles',$data,1);
-												if($check){
-													die(json_encode([
-														'type'=>'success',
-														'msg'=>'سرفصل با موفقیت ویرایش شد',
-														'err'=>null,
-														'data'=>null
-													]));
-												}else{
-													die(json_encode([
-														'type'=>'warning',
-														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-														'err'=>-2,
-														'data'=>null
-													]));
-												}
-											}
-											break;
-									}
-									break;
-								case 'costIncome':
-									switch($urlPath[5])
-									{
-										case 'add':
-											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']))
-											{
-												$data=$_POST['data'];
-												$data['price']=str_replace(',','',$data['price']);
-												$validation=new Validation($data,[
-													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
-													'titleId'=>[
-														'required[سرفصل]',
-														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
-													],
-													'price'=>['required[مبلغ]','numeric[مبلغ]'],
-													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
-													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
-												]);
-												if($validation->getStatus()){
-													die(json_encode([
-														'type'=>'danger',
-														'msg'=>$validation->getErrors(),
-														'err'=>-1,
-														'data'=>null
-													]));
-												}
-												$id=$db->insert('ACCCostIncome',$data);
-												if((bool)$id){
-													die(json_encode([
-														'type'=>'success',
-														'msg'=>'مورد جدید با موفقیت ثبت شد',
-														'err'=>null,
-														'data'=>null
-													]));
-												}else{
-													die(json_encode([
-														'type'=>'warning',
-														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-														'err'=>-2,
-														'data'=>null
-													]));
-												}
-											}
-											break;
-										case 'getData':
-											if(isset($_POST['id'])){
-												$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']=$_POST['id'];
-												echo $db->where('id',$_POST['id'])->jsonBuilder()->getOne('ACCCostIncome',[
-													'titleId','subject','price','income','description'
-												]);
-											}
-											break;
-										case 'edit':
-											if(!isset($_POST['Token'])||$_POST['Token']!=$_SESSION['Token']) die();
-											if(isset($_POST['data']) && isset($_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID']))
-											{
-												$data=$_POST['data'];
-												$data['price']=str_replace(',','',$data['price']);
-												$validation=new Validation($data,[
-													'subject'=>['required[موضوع]','length[موضوع,حداکثر,100]:max,100'],
-													'titleId'=>[
-														'required[سرفصل]',
-														'in[انتخاب,سرفصل]:'.implode(',',array_column($db->get('ACCTitles',null,'id'),'id'))
-													],
-													'price'=>['required[مبلغ]','numeric[مبلغ]'],
-													'income'=>['required[نوع]','in[انتخاب,نوع]:0,1'],
-													'description'=>['required[توضیحات]','length[توضیحات,حداکثر,65535]:max,65535'],
-												]);
-												if($validation->getStatus()){
-													die(json_encode([
-														'type'=>'danger',
-														'msg'=>$validation->getErrors(),
-														'err'=>-1,
-														'data'=>null
-													]));
-												}
-												$check=$db->where('id',$_SESSION['DATA']['Accounting']['CostIncome']['EDIT']['ID'])->
-												update('ACCCostIncome',$data,1);
-												if($check){
-													die(json_encode([
-														'type'=>'success',
-														'msg'=>'درخواست شما با موفقیت انجام شد',
-														'err'=>null,
-														'data'=>null
-													]));
-												}else{
-													die(json_encode([
-														'type'=>'warning',
-														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-														'err'=>-2,
-														'data'=>null
-													]));
-												}
-											}
-											break;
-										case 'remove':
-											if(isset($_POST['id'])){
-												$check=$db->where('id',$_POST['id'])->delete('ACCCostIncome',1);
-												if($check){
-													die(json_encode([
-														'type'=>'success',
-														'msg'=>'درخواست شما با موفقیت انجام شد',
-														'err'=>null,
-														'data'=>null
-													]));
-												}else{
-													die(json_encode([
-														'type'=>'warning',
-														'msg'=>'مشکلی در انجام درخواست شما پیش آمده. با پشتیبان سایت تماس بگیرید و کد ('.$db->getLastErrno().') را اعلام نمایید',
-														'err'=>-2,
-														'data'=>null
-													]));
-												}
-											}
-											break;
-									}
-									break;
-							}
-							break;
 						default:
 							if($_SESSION['Admin']['id']==1){
 								switch($urlPath[3]){

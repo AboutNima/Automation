@@ -138,6 +138,7 @@
 					?>
                     <li class="title"> مدیریت سایت </li>
                     <li><a href="/account/news"><i class="fa fa-newspaper"></i><p> اخبار </p></a></li>
+                    <li><a href="/account/gallery"><i class="fa fa-image"></i><p> گالری عکس ها </p></a></li>
                     <li><a href="/account/certificates"><i class="fa fa-file-certificate"></i><p> مجوزات </p></a></li>
                     <li class="title"> آموزشگاه </li>
                     <li><a href="/account/students/list"><i class="fa fa-users"></i><p> کارآموزان </p></a></li>

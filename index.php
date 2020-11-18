@@ -77,7 +77,14 @@ switch($urlPath[0])
 {
 	// Site
 	case '':
-		require_once 'app/controller/motherPage/header.php';
+		require_once 'app/controller/home/home.php';
+		break;
+	case 'certificates':
+		require_once 'app/controller/home/certificates.php';
+		break;
+	case 'news':
+		if(!empty($link=urldecode($urlPath[1]))) require_once 'app/controller/home/news/information.php';
+		else require_once 'app/controller/home/news/list.php';
 		break;
 
 	// Ajax
@@ -157,9 +164,6 @@ switch($urlPath[0])
 					{
 						case 'title':
 							require_once 'app/controller/account/admin/accounting/title.php';
-							break;
-						case 'costIncome':
-							require_once 'app/controller/account/admin/accounting/costIncome.php';
 							break;
 					}
 					break;

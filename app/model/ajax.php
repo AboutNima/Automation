@@ -207,9 +207,6 @@ switch($urlPath[1])
 										if($upload->uploaded)
 										{
 											$upload->file_new_name_body=sha1(randomCode(10));
-											$upload->image_resize=true;
-											$upload->image_x=250;
-											$upload->image_y=250;
 											$upload->process('public/home/media/certificates');
 											if($upload->processed) $data['photo']=str_replace('\\','/',$upload->file_dst_pathname);
 										}
@@ -277,9 +274,6 @@ switch($urlPath[1])
 											if($upload->uploaded)
 											{
 												$upload->file_new_name_body=sha1(randomCode(10));
-												$upload->image_resize=true;
-												$upload->image_x=250;
-												$upload->image_y=250;
 												$upload->process('public/home/media/certificates');
 												if($upload->processed) $data['photo']=str_replace('\\','/',$upload->file_dst_pathname);
 											}

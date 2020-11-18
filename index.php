@@ -54,6 +54,7 @@ foreach($urlPath as $item)
 		case 'news': $urlCrt[]='اخبار';break;
 		case 'courses': $urlCrt[]='دوره های آموزشی';break;
 		case 'certificates': $urlCrt[]='مجوزات';break;
+		case 'gallery': $urlCrt[]='گالری عکس ها';break;
 		default: $urlCrt[]=$item;break;
 	}
 }
@@ -227,6 +228,9 @@ switch($urlPath[0])
 					break;
 				case 'news':
 					require_once 'app/controller/account/admin/news.php';
+					break;
+				case 'gallery':
+					require_once 'app/controller/account/admin/gallery.php';
 					break;
 				case 'certificates':
 					require_once 'app/controller/account/admin/certificates.php';
